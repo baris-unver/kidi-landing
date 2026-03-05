@@ -171,6 +171,8 @@ app.get('/{*splat}', (req, res) => {
 })
 
 // JSON error handler -- catches body parser errors, etc.
+// Express requires exactly 4 params to detect this as an error handler
+// eslint-disable-next-line no-unused-vars
 app.use((err, _req, res, _next) => {
   res.status(err.status || 500).json({ error: err.message || 'Internal server error' })
 })
