@@ -240,12 +240,40 @@ function SettingsEditor({ settings, onChange }) {
       </div>
 
       <div className="admin-card">
-        <div className="admin-card-title">🖼️ Features Image</div>
-        <ImageField label="Device close-up image (shown above feature cards)"
-          value={settings.featuresImage?.url}
-          onChange={v => set('featuresImage.url', v)} previewSize={200} />
-        <Field label="Alt text (accessibility)" value={settings.featuresImage?.alt}
-          onChange={v => set('featuresImage.alt', v)} />
+        <div className="admin-card-title">🖼️ Features Gallery</div>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 12px' }}>
+          First image shows as the large main image. Others appear as thumbnails on the right. Click a thumbnail to swap it into the main view.
+        </p>
+        {(settings.featuresImages || []).map((img, i) => (
+          <div key={i} style={{ padding: '12px', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', marginBottom: 10, background: 'var(--bg)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <span style={{ fontSize: 13, fontWeight: 600 }}>Image {i + 1}{i === 0 ? ' (main)' : ''}</span>
+              <button className="btn btn-ghost admin-remove-btn" onClick={() => {
+                const next = structuredClone(settings)
+                next.featuresImages.splice(i, 1)
+                onChange(next)
+              }} title="Remove">✕</button>
+            </div>
+            <ImageField label="Image" value={img.url}
+              onChange={v => {
+                const next = structuredClone(settings)
+                next.featuresImages[i].url = v
+                onChange(next)
+              }} previewSize={120} />
+            <Field label="Alt text" value={img.alt}
+              onChange={v => {
+                const next = structuredClone(settings)
+                next.featuresImages[i].alt = v
+                onChange(next)
+              }} />
+          </div>
+        ))}
+        <button className="btn btn-ghost" style={{ fontSize: 13 }} onClick={() => {
+          const next = structuredClone(settings)
+          if (!next.featuresImages) next.featuresImages = []
+          next.featuresImages.push({ url: '', alt: '' })
+          onChange(next)
+        }}>+ Add image</button>
       </div>
 
       <div className="admin-card">

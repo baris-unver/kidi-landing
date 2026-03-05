@@ -5,8 +5,16 @@ import useScrollReveal from '../hooks/useScrollReveal'
 export function Features() {
   const { content, settings } = useSite()
   const ref = useScrollReveal()
+  const [activeIdx, setActiveIdx] = useState(0)
   if (!content) return null
   const { features } = content
+
+  const images = settings?.featuresImages?.length
+    ? settings.featuresImages.filter(img => img.url)
+    : settings?.featuresImage?.url
+      ? [settings.featuresImage]
+      : []
+
   return (
     <section className="features section" id="features" ref={ref}>
       <div className="container">
@@ -14,9 +22,22 @@ export function Features() {
           <h2>{features.title}</h2>
           <p>{features.subtitle}</p>
         </div>
-        {settings?.featuresImage?.url && (
-          <div className="features-showcase reveal">
-            <img src={settings.featuresImage.url} alt={settings.featuresImage.alt || ''} />
+        {images.length > 0 && (
+          <div className="features-gallery reveal">
+            <div className="features-gallery-main">
+              <img src={images[activeIdx]?.url || images[0]?.url} alt={images[activeIdx]?.alt || ''} />
+            </div>
+            {images.length > 1 && (
+              <div className="features-gallery-thumbs">
+                {images.map((img, i) => (
+                  <button key={i}
+                    className={`features-gallery-thumb${i === activeIdx ? ' active' : ''}`}
+                    onClick={() => setActiveIdx(i)}>
+                    <img src={img.url} alt={img.alt || ''} />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
         <div className="features-grid">
