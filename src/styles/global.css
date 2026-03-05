@@ -804,6 +804,11 @@ button { font-family: var(--font); cursor: pointer; border: none; }
 }
 [data-theme="dark"] .footer {
   background: #070F18;
+  color: #F5EFE6;
+}
+[data-theme="dark"] .footer a,
+[data-theme="dark"] .footer-col-links li a {
+  color: #F5EFE6;
 }
 .footer-top {
   display: grid;

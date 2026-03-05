@@ -135,9 +135,9 @@ export function FAQ() {
         <div className="section-header reveal">
           <h2>{faq.title}</h2>
         </div>
-        <div className="faq-list">
+        <div className="faq-list reveal">
           {faq.items.map((item, i) => (
-            <div className={`faq-item reveal ${open === i ? 'open' : ''}`} key={i} style={{ transitionDelay: `${i * 0.06}s` }}>
+            <div className={`faq-item ${open === i ? 'open' : ''}`} key={i}>
               <button className="faq-question" onClick={() => setOpen(open === i ? null : i)}>
                 {item.q}
                 <span className="faq-chevron">+</span>
