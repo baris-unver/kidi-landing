@@ -8,6 +8,7 @@ services:
       - "3000"
     volumes:
       - content_data:/app/data/content
+      - upload_data:/app/data/uploads
 
   nginx:
     image: nginx:alpine
@@ -17,9 +18,11 @@ services:
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
+      - upload_data:/app/data/uploads:ro
     depends_on:
       - app
     restart: always
 
 volumes:
   content_data:
+  upload_data:

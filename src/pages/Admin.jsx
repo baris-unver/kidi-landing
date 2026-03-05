@@ -46,12 +46,28 @@ function Field({ label, value, onChange, type = 'text', rows }) {
 
 function ImageField({ label, value, onChange, previewSize = 80 }) {
   const ref = useRef()
-  const handleFile = e => {
+  const [uploading, setUploading] = useState(false)
+  const handleFile = async e => {
     const file = e.target.files[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = ev => onChange(ev.target.result)
-    reader.readAsDataURL(file)
+    setUploading(true)
+    try {
+      const form = new FormData()
+      form.append('file', file)
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getToken()}` },
+        body: form,
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Upload failed')
+      onChange(data.url)
+    } catch (err) {
+      alert('Upload failed: ' + err.message)
+    } finally {
+      setUploading(false)
+      e.target.value = ''
+    }
   }
   return (
     <div className="admin-field">
@@ -62,8 +78,9 @@ function ImageField({ label, value, onChange, previewSize = 80 }) {
         </div>
         <div className="admin-image-upload-btn">
           <button className="btn btn-ghost" style={{ padding: '8px 16px', fontSize: 13 }}
+            disabled={uploading}
             onClick={() => ref.current.click()}>
-            Upload image
+            {uploading ? 'Uploading...' : 'Upload image'}
           </button>
           {value && (
             <button className="btn btn-ghost" style={{ padding: '8px 16px', fontSize: 13, color: '#ff4444' }}

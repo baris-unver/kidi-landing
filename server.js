@@ -6,11 +6,12 @@ import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
-app.use(express.json({ limit: '10mb' }))
+app.use(express.json({ limit: '50mb' }))
 
 const PORT = process.env.PORT || 3000
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin'
 const DATA_DIR = path.join(__dirname, 'data', 'content')
+const UPLOAD_DIR = path.join(__dirname, 'data', 'uploads')
 const DIST_DIR = path.join(__dirname, 'dist')
 
 const sessions = new Map()
@@ -65,6 +66,103 @@ app.post('/api/save', requireAuth, async (req, res) => {
   }
 })
 
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/x-icon', 'image/vnd.microsoft.icon']
+const MAX_UPLOAD = 10 * 1024 * 1024 // 10 MB per file
+
+app.post('/api/upload', requireAuth, async (req, res) => {
+  try {
+    const contentType = req.headers['content-type'] || ''
+
+    if (!contentType.startsWith('multipart/form-data') && !contentType.startsWith('application/octet-stream')) {
+      return res.status(400).json({ error: 'Expected file upload' })
+    }
+
+    const chunks = []
+    let size = 0
+
+    await new Promise((resolve, reject) => {
+      req.on('data', chunk => {
+        size += chunk.length
+        if (size > MAX_UPLOAD * 2) {
+          reject(new Error('File too large (max 10MB)'))
+          return
+        }
+        chunks.push(chunk)
+      })
+      req.on('end', resolve)
+      req.on('error', reject)
+    })
+
+    const raw = Buffer.concat(chunks)
+
+    const boundaryMatch = contentType.match(/boundary=(.+)/)
+    if (!boundaryMatch) {
+      return res.status(400).json({ error: 'Missing boundary in multipart data' })
+    }
+
+    const boundary = boundaryMatch[1]
+    const parts = parseMultipart(raw, boundary)
+    const filePart = parts.find(p => p.filename)
+
+    if (!filePart) {
+      return res.status(400).json({ error: 'No file found in upload' })
+    }
+
+    if (!ALLOWED_TYPES.includes(filePart.type)) {
+      return res.status(400).json({ error: `File type not allowed: ${filePart.type}` })
+    }
+
+    if (filePart.data.length > MAX_UPLOAD) {
+      return res.status(400).json({ error: 'File too large (max 10MB)' })
+    }
+
+    await fs.mkdir(UPLOAD_DIR, { recursive: true })
+
+    const ext = path.extname(filePart.filename).toLowerCase() || '.bin'
+    const safeName = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}${ext}`
+    const filePath = path.join(UPLOAD_DIR, safeName)
+    await fs.writeFile(filePath, filePart.data)
+
+    res.json({ url: `/uploads/${safeName}` })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+function parseMultipart(buffer, boundary) {
+  const parts = []
+  const sep = Buffer.from(`--${boundary}`)
+  let start = buffer.indexOf(sep) + sep.length
+
+  while (start < buffer.length) {
+    const nextSep = buffer.indexOf(sep, start)
+    if (nextSep === -1) break
+
+    const part = buffer.subarray(start, nextSep)
+    const headerEnd = part.indexOf('\r\n\r\n')
+    if (headerEnd === -1) { start = nextSep + sep.length; continue }
+
+    const headerStr = part.subarray(0, headerEnd).toString()
+    const data = part.subarray(headerEnd + 4, part.length - 2) // trim trailing \r\n
+
+    const nameMatch = headerStr.match(/name="([^"]+)"/)
+    const filenameMatch = headerStr.match(/filename="([^"]+)"/)
+    const typeMatch = headerStr.match(/Content-Type:\s*(.+)/i)
+
+    parts.push({
+      name: nameMatch?.[1],
+      filename: filenameMatch?.[1],
+      type: typeMatch?.[1]?.trim(),
+      data,
+    })
+
+    start = nextSep + sep.length
+  }
+
+  return parts
+}
+
+app.use('/uploads', express.static(UPLOAD_DIR))
 app.use('/content', express.static(DATA_DIR))
 app.use(express.static(DIST_DIR))
 
@@ -72,7 +170,13 @@ app.get('/{*splat}', (req, res) => {
   res.sendFile(path.join(DIST_DIR, 'index.html'))
 })
 
+// JSON error handler -- catches body parser errors, etc.
+app.use((err, _req, res, _next) => {
+  res.status(err.status || 500).json({ error: err.message || 'Internal server error' })
+})
+
 app.listen(PORT, async () => {
   await fs.mkdir(DATA_DIR, { recursive: true }).catch(() => {})
+  await fs.mkdir(UPLOAD_DIR, { recursive: true }).catch(() => {})
   console.log(`Server running on port ${PORT}`)
 })
