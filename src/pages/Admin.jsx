@@ -707,7 +707,22 @@ function WhatsAppEditor({ settings, onChange }) {
       </div>
 
       <div className="admin-card">
-        <div className="admin-card-title">Position</div>
+        <div className="admin-card-title">Appearance</div>
+        <div className="admin-field">
+          <label>Button icon</label>
+          <select
+            value={wa.icon || 'message'}
+            onChange={e => set('whatsapp.icon', e.target.value)}
+            style={{
+              padding: '10px 14px', background: 'var(--bg)', border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font)', fontSize: 14,
+              color: 'var(--text)', width: '100%'
+            }}
+          >
+            <option value="message">Chat / Message</option>
+            <option value="phone">Phone</option>
+          </select>
+        </div>
         <div className="admin-field">
           <label>Button position</label>
           <select

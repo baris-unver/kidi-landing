@@ -64,6 +64,7 @@
     "agentPhoto": "",
     "welcomeMessage": "Hi! How can we help you?",
     "prefillMessage": "Hi, I have a question about kidi.ai",
+    "icon": "message",
     "position": "right"
   }
 }
