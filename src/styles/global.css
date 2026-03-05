@@ -529,6 +529,19 @@ button { font-family: var(--font); cursor: pointer; border: none; }
 
 /* ── Features ── */
 .features { background: var(--bg-secondary); }
+.features-showcase {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.features-showcase img {
+  max-width: 900px;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  object-fit: contain;
+}
+
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

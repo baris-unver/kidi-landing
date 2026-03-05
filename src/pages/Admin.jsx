@@ -223,6 +223,15 @@ function SettingsEditor({ settings, onChange }) {
       </div>
 
       <div className="admin-card">
+        <div className="admin-card-title">🖼️ Features Image</div>
+        <ImageField label="Device close-up image (shown above feature cards)"
+          value={settings.featuresImage?.url}
+          onChange={v => set('featuresImage.url', v)} previewSize={200} />
+        <Field label="Alt text (accessibility)" value={settings.featuresImage?.alt}
+          onChange={v => set('featuresImage.alt', v)} />
+      </div>
+
+      <div className="admin-card">
         <div className="admin-card-title">🎨 Logo</div>
         <Field label="Logo text (shown when no image)" value={settings.logo?.text}
           onChange={v => set('logo.text', v)} />

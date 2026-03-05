@@ -3,7 +3,7 @@ import { useSite } from '../context/SiteContext'
 import useScrollReveal from '../hooks/useScrollReveal'
 
 export function Features() {
-  const { content } = useSite()
+  const { content, settings } = useSite()
   const ref = useScrollReveal()
   if (!content) return null
   const { features } = content
@@ -14,6 +14,11 @@ export function Features() {
           <h2>{features.title}</h2>
           <p>{features.subtitle}</p>
         </div>
+        {settings?.featuresImage?.url && (
+          <div className="features-showcase reveal">
+            <img src={settings.featuresImage.url} alt={settings.featuresImage.alt || ''} />
+          </div>
+        )}
         <div className="features-grid">
           {features.items.map((item, i) => (
             <div className="feature-card reveal" key={i} style={{ transitionDelay: `${i * 0.08}s` }}>
