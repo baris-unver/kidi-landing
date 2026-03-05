@@ -1,7 +1,10 @@
 {
   "meta": {
     "title": "kidi.ai — Learning that feels like play",
-    "description": "AI-powered personalized education for kids aged 4–12. Adaptive lessons, real progress, endless curiosity."
+    "description": "AI-powered personalized education for kids aged 4–12. Adaptive lessons, real progress, endless curiosity.",
+    "keywords": "AI education, kids learning, personalized learning, adaptive learning, kidi",
+    "ogTitle": "",
+    "ogDescription": ""
   },
   "nav": {
     "links": [

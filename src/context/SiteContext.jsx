@@ -2,6 +2,68 @@ import { createContext, useContext, useState, useEffect } from 'react'
 
 const SiteContext = createContext(null)
 
+function setMeta(name, content, attr = 'name') {
+  if (!content) return
+  let el = document.querySelector(`meta[${attr}="${name}"]`)
+  if (!el) {
+    el = document.createElement('meta')
+    el.setAttribute(attr, name)
+    document.head.appendChild(el)
+  }
+  el.setAttribute('content', content)
+}
+
+function applyMetaTags(content, settings) {
+  const meta = content?.meta || {}
+  const seo = settings?.seo || {}
+
+  if (meta.title) document.title = meta.title
+  if (seo.lang) document.documentElement.setAttribute('lang', seo.lang)
+
+  setMeta('description', meta.description)
+  setMeta('keywords', meta.keywords)
+  setMeta('robots', seo.robots)
+
+  if (seo.googleSiteVerification) {
+    setMeta('google-site-verification', seo.googleSiteVerification)
+  }
+
+  const ogTitle = meta.ogTitle || meta.title
+  const ogDesc = meta.ogDescription || meta.description
+  setMeta('og:title', ogTitle, 'property')
+  setMeta('og:description', ogDesc, 'property')
+  setMeta('og:type', 'website', 'property')
+  if (seo.siteUrl) setMeta('og:url', seo.siteUrl, 'property')
+  if (seo.ogImage) setMeta('og:image', seo.ogImage, 'property')
+  if (meta.title) setMeta('og:site_name', meta.title.split('—')[0]?.trim() || meta.title, 'property')
+
+  setMeta('twitter:card', seo.ogImage ? 'summary_large_image' : 'summary', 'name')
+  setMeta('twitter:title', ogTitle)
+  setMeta('twitter:description', ogDesc)
+  if (seo.ogImage) setMeta('twitter:image', seo.ogImage)
+  if (seo.twitterHandle) setMeta('twitter:site', seo.twitterHandle)
+
+  if (seo.siteUrl) {
+    let link = document.querySelector('link[rel="canonical"]')
+    if (!link) {
+      link = document.createElement('link')
+      link.setAttribute('rel', 'canonical')
+      document.head.appendChild(link)
+    }
+    link.setAttribute('href', seo.siteUrl)
+  }
+
+  if (settings.favicon?.imageUrl) {
+    let link = document.querySelector('link[rel="icon"]')
+    if (!link) {
+      link = document.createElement('link')
+      link.setAttribute('rel', 'icon')
+      document.head.appendChild(link)
+    }
+    link.setAttribute('href', settings.favicon.imageUrl)
+  }
+}
+
 export function SiteProvider({ children }) {
   // ── Theme ──────────────────────────────────────────
   const [theme, setTheme] = useState(() => {
@@ -73,6 +135,9 @@ export function SiteProvider({ children }) {
           if (settingsData.brand.accentColor) root.style.setProperty('--accent', settingsData.brand.accentColor)
           if (settingsData.brand.sunColor) root.style.setProperty('--sun', settingsData.brand.sunColor)
         }
+
+        // Apply SEO meta tags
+        applyMetaTags(contentData, settingsData)
       } catch (e) {
         console.error('Content load failed', e)
       } finally {

@@ -191,6 +191,23 @@ function SettingsEditor({ settings, onChange }) {
   }
   return (
     <>
+      <div className="admin-card">
+        <div className="admin-card-title">🌐 SEO / Site Settings</div>
+        <Field label="Site URL (canonical)" value={settings.seo?.siteUrl}
+          onChange={v => set('seo.siteUrl', v)} />
+        <ImageField label="Default OG image (shared on social media, 1200×630 recommended)"
+          value={settings.seo?.ogImage}
+          onChange={v => set('seo.ogImage', v)} previewSize={120} />
+        <Field label="Twitter handle (e.g. @kidiai)" value={settings.seo?.twitterHandle}
+          onChange={v => set('seo.twitterHandle', v)} />
+        <Field label="Robots directive" value={settings.seo?.robots}
+          onChange={v => set('seo.robots', v)} />
+        <Field label="Google Site Verification code" value={settings.seo?.googleSiteVerification}
+          onChange={v => set('seo.googleSiteVerification', v)} />
+        <Field label="Default language (e.g. en)" value={settings.seo?.lang}
+          onChange={v => set('seo.lang', v)} />
+      </div>
+
       <SectionOrderEditor
         sections={settings.sections}
         onChange={v => set('sections', v)}
@@ -319,6 +336,12 @@ function ContentEditor({ content, onChange }) {
         <Field label="Page title" value={content.meta?.title} onChange={v => set('meta.title', v)} />
         <Field label="Meta description" value={content.meta?.description}
           onChange={v => set('meta.description', v)} rows={2} />
+        <Field label="Keywords (comma-separated)" value={content.meta?.keywords}
+          onChange={v => set('meta.keywords', v)} />
+        <Field label="OG title (leave empty to use page title)" value={content.meta?.ogTitle}
+          onChange={v => set('meta.ogTitle', v)} />
+        <Field label="OG description (leave empty to use meta description)" value={content.meta?.ogDescription}
+          onChange={v => set('meta.ogDescription', v)} rows={2} />
       </div>
 
       {/* Nav */}

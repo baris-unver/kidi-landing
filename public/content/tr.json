@@ -1,7 +1,10 @@
 {
   "meta": {
     "title": "kidi.ai — Oyun gibi hissettiren öğrenme",
-    "description": "4-12 yaş arası çocuklar için yapay zeka destekli kişiselleştirilmiş eğitim. Uyarlanabilir dersler, gerçek ilerleme, sonsuz merak."
+    "description": "4-12 yaş arası çocuklar için yapay zeka destekli kişiselleştirilmiş eğitim. Uyarlanabilir dersler, gerçek ilerleme, sonsuz merak.",
+    "keywords": "yapay zeka eğitim, çocuk öğrenme, kişiselleştirilmiş öğrenme, adaptif öğrenme, kidi",
+    "ogTitle": "",
+    "ogDescription": ""
   },
   "nav": {
     "links": [
