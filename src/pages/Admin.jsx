@@ -570,6 +570,56 @@ function Toast({ toast, onDismiss }) {
   )
 }
 
+// ─── Import / Export ─────────────────────────────────────────────────────────
+function ExportImportBar({ data, lang, onImport }) {
+  const fileRef = useRef()
+
+  const handleExport = () => {
+    const json = JSON.stringify(data, null, 2)
+    const blob = new Blob([json], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${lang}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      try {
+        const parsed = JSON.parse(ev.target.result)
+        onImport(parsed)
+      } catch {
+        alert('Invalid JSON file')
+      }
+    }
+    reader.readAsText(file)
+    e.target.value = ''
+  }
+
+  return (
+    <div className="admin-card" style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+      <div style={{ flex: 1, minWidth: 200 }}>
+        <div className="admin-card-title" style={{ marginBottom: 4 }}>📦 Bulk Edit</div>
+        <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+          Export as JSON, edit externally, then import back.
+        </div>
+      </div>
+      <button className="btn btn-ghost" style={{ padding: '8px 16px', fontSize: 13 }} onClick={handleExport}>
+        ⬇ Export JSON
+      </button>
+      <button className="btn btn-ghost" style={{ padding: '8px 16px', fontSize: 13 }} onClick={() => fileRef.current.click()}>
+        ⬆ Import JSON
+      </button>
+      <input ref={fileRef} type="file" accept=".json,application/json" style={{ display: 'none' }} onChange={handleFileChange} />
+    </div>
+  )
+}
+
 // ─── Main Admin Page ───────────────────────────────────────────────────────────
 const NAV_SECTIONS = [
   { id: 'settings', icon: '⚙️', label: 'Global Settings' },
@@ -738,10 +788,16 @@ export default function Admin() {
               <SettingsEditor settings={settingsData} onChange={handleSettingsChange} />
             )}
             {isReady && activeSection === 'content-en' && (
-              <ContentEditor content={contentEn} onChange={handleEnChange} />
+              <>
+                <ExportImportBar data={contentEn} lang="en" onImport={handleEnChange} />
+                <ContentEditor content={contentEn} onChange={handleEnChange} />
+              </>
             )}
             {isReady && activeSection === 'content-tr' && (
-              <ContentEditor content={contentTr} onChange={handleTrChange} />
+              <>
+                <ExportImportBar data={contentTr} lang="tr" onImport={handleTrChange} />
+                <ContentEditor content={contentTr} onChange={handleTrChange} />
+              </>
             )}
           </div>
 
