@@ -51,7 +51,10 @@ export default function Nav() {
         <div className="nav-inner">
           <a href="#" className="nav-logo">
             {logo?.imageUrl
-              ? <img src={logo.imageUrl} alt={logo.text || 'kidi.ai'} style={{ width: logo.width || 120 }} />
+              ? <img src={logo.imageUrl} alt={logo.text || 'kidi.ai'} style={{
+                  width: logo.width ? `${logo.width}px` : 'auto',
+                  height: logo.height ? `${logo.height}px` : 'auto',
+                }} />
               : <span>{logo?.text || 'kidi.ai'}</span>
             }
           </a>

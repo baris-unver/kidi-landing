@@ -219,8 +219,8 @@ button { font-family: var(--font); cursor: pointer; border: none; }
   flex-shrink: 0;
 }
 .nav-logo img {
-  height: 32px;
-  width: auto;
+  max-height: 48px;
+  object-fit: contain;
 }
 .nav-links {
   display: flex;

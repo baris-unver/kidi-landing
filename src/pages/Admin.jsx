@@ -217,8 +217,12 @@ function SettingsEditor({ settings, onChange }) {
         <div className="admin-card-title">🎨 Logo</div>
         <Field label="Logo text (shown when no image)" value={settings.logo?.text}
           onChange={v => set('logo.text', v)} />
-        <Field label="Logo width (px)" value={settings.logo?.width}
-          onChange={v => set('logo.width', parseInt(v) || 120)} type="number" />
+        <div className="admin-field-row">
+          <Field label="Logo width (px)" value={settings.logo?.width}
+            onChange={v => set('logo.width', parseInt(v) || 0)} type="number" />
+          <Field label="Logo height (px)" value={settings.logo?.height}
+            onChange={v => set('logo.height', parseInt(v) || 0)} type="number" />
+        </div>
         <ImageField label="Logo image (optional — replaces text)" value={settings.logo?.imageUrl}
           onChange={v => set('logo.imageUrl', v)} previewSize={120} />
       </div>
