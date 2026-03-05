@@ -1,0 +1,34 @@
+{
+  "logo": {
+    "text": "kidi.ai",
+    "imageUrl": "",
+    "width": 120
+  },
+  "favicon": {
+    "imageUrl": ""
+  },
+  "brand": {
+    "primaryColor": "#FF6B35",
+    "accentColor": "#06D6A0",
+    "sunColor": "#FFD166"
+  },
+  "hero": {
+    "imageUrl": ""
+  },
+  "social": {
+    "twitter": "https://twitter.com/kidiai",
+    "instagram": "",
+    "linkedin": ""
+  },
+  "contact": {
+    "email": "hello@kidi.ai"
+  },
+  "sections": [
+    { "id": "hero", "visible": true },
+    { "id": "features", "visible": true },
+    { "id": "howItWorks", "visible": true },
+    { "id": "pricing", "visible": true },
+    { "id": "testimonials", "visible": true },
+    { "id": "faq", "visible": true }
+  ]
+}

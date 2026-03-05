@@ -1,0 +1,202 @@
+{
+  "meta": {
+    "title": "kidi.ai — Oyun gibi hissettiren öğrenme",
+    "description": "4-12 yaş arası çocuklar için yapay zeka destekli kişiselleştirilmiş eğitim. Uyarlanabilir dersler, gerçek ilerleme, sonsuz merak."
+  },
+  "nav": {
+    "links": [
+      { "label": "Özellikler", "href": "#features" },
+      { "label": "Nasıl çalışır", "href": "#how-it-works" },
+      { "label": "Fiyatlar", "href": "#pricing" },
+      { "label": "SSS", "href": "#faq" }
+    ],
+    "cta": "Ücretsiz dene"
+  },
+  "hero": {
+    "badge": "✨ Erken Erişim Başladı",
+    "title": "Oyun gibi hissettiren",
+    "titleAccent": "öğrenme",
+    "subtitle": "kidi.ai, çocuğunuzun kendine özgü hızına ve merakına uyum sağlar — okul gibi hissettirmeyen bir okul yaratır.",
+    "cta": "Ücretsiz dene",
+    "ctaSecondary": "Demo izle",
+    "trustLine": "12.000'den fazla aile zaten öğreniyor"
+  },
+  "features": {
+    "title": "Çocukların gerçekten öğrenme şekline göre tasarlandı",
+    "subtitle": "Ezber kartları değil. Sıkıcı videolar değil. Çocuğunuzla birlikte büyüyen, canlı bir müfredat.",
+    "items": [
+      {
+        "icon": "🧠",
+        "title": "Uyarlanabilir Yapay Zeka",
+        "desc": "Her ders, çocuğunuzun doğru, yanlış veya atladıklarına göre gerçek zamanlı olarak ayarlanır."
+      },
+      {
+        "icon": "🎮",
+        "title": "Oyun Tabanlı Öğrenme",
+        "desc": "İlerleme seviye atlamak gibi hissettirir. Çocuklar ödüller kazanır, hikayeler açar ve kendi istekleriyle geri gelir."
+      },
+      {
+        "icon": "📊",
+        "title": "Ebeveyn Paneli",
+        "desc": "Çocuğunuzun bugün ne öğrendiğini, nerede başarılı olduğunu ve nerede biraz daha yardıma ihtiyacı olduğunu görün."
+      },
+      {
+        "icon": "🌍",
+        "title": "Çok Dil Desteği",
+        "desc": "Türkçe, İngilizce ve daha fazlasında öğrenin. İki dilli aileler ve uluslararası okullar için idealdir."
+      },
+      {
+        "icon": "🔒",
+        "title": "Güvenli ve Reklamsız",
+        "desc": "Reklam yok, karanlık kalıplar yok, sosyal akışlar yok. Sadece korunaklı bir ortamda saf, neşeli öğrenme."
+      },
+      {
+        "icon": "⚡",
+        "title": "Anında Kurulum",
+        "desc": "2 dakikadan kısa sürede hazır. Uygulama indirmeye gerek yok — her tablet, telefon veya bilgisayarda çalışır."
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "Dakikalar içinde sıfırdan öğrenmeye",
+    "subtitle": "Çocuğunuzun potansiyelini açmak için üç basit adım.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Çocuğunuzun profilini oluşturun",
+        "desc": "Çocuğunuzun yaşını, ilgi alanlarını ve mevcut seviyesini bize söyleyin. Yapay zekamız anında kişiselleştirilmiş bir müfredat oluşturur."
+      },
+      {
+        "number": "02",
+        "title": "İlk derse başlayın",
+        "desc": "Çocuğunuz interaktif bir maceraya dalar. Yapay zeka izler, uyum sağlar ve her şeyi mükemmel şekilde zorlu tutar."
+      },
+      {
+        "number": "03",
+        "title": "Gelişimini izleyin",
+        "desc": "Haftalık ilerleme raporları alın. Becerilerin geliştiğini görün. Dönüm noktalarını ailece kutlayın."
+      }
+    ]
+  },
+  "pricing": {
+    "title": "Basit, dürüst fiyatlandırma",
+    "subtitle": "Gizli ücret yok. İstediğiniz zaman iptal edin.",
+    "badge": "En popüler",
+    "plans": [
+      {
+        "name": "Başlangıç",
+        "price": "Ücretsiz",
+        "period": "",
+        "desc": "kidi.ai'yi keşfetmek için mükemmel",
+        "features": [
+          "1 çocuk profili",
+          "Ayda 20 ders",
+          "Temel ilerleme raporları",
+          "Yalnızca Türkçe / İngilizce"
+        ],
+        "cta": "Ücretsiz başla",
+        "highlighted": false
+      },
+      {
+        "name": "Aile",
+        "price": "₺299",
+        "period": "/ ay",
+        "desc": "Ailenizin ihtiyacı olan her şey",
+        "features": [
+          "4 çocuk profiline kadar",
+          "Sınırsız ders",
+          "Tam analitik paneli",
+          "Tüm diller",
+          "Öncelikli destek"
+        ],
+        "cta": "Ücretsiz dene",
+        "highlighted": true
+      },
+      {
+        "name": "Okul",
+        "price": "Özel",
+        "period": "",
+        "desc": "Sınıflar ve kurumlar için",
+        "features": [
+          "Sınırsız öğrenci",
+          "Öğretmen paneli",
+          "Müfredat uyumu",
+          "API erişimi",
+          "Özel destek"
+        ],
+        "cta": "Bize ulaşın",
+        "highlighted": false
+      }
+    ]
+  },
+  "testimonials": {
+    "title": "Ebeveynler ne diyor",
+    "items": [
+      {
+        "quote": "Oğlum artık kendi isteğiyle derslerini yapmak istiyor. Bu hayatında hiç olmamıştı.",
+        "author": "Selin A.",
+        "role": "7 yaşında bir çocuğun annesi",
+        "avatar": "SA"
+      },
+      {
+        "quote": "Hem İngilizce hem Türkçe kullanıyoruz. Dil geçişi çok akıcı ve kızım bayılıyor.",
+        "author": "Mehmet K.",
+        "role": "Ebeveyn, İstanbul",
+        "avatar": "MK"
+      },
+      {
+        "quote": "Ebeveyn paneli inanılmaz. Çocuğumun nerede zorlandığını ve nerede parladığını sonunda anlıyorum.",
+        "author": "Priya R.",
+        "role": "9 yaşında ikiz annesi",
+        "avatar": "PR"
+      }
+    ]
+  },
+  "faq": {
+    "title": "Sık sorulan sorular",
+    "items": [
+      {
+        "q": "kidi.ai hangi yaşlar için tasarlandı?",
+        "a": "kidi.ai, 4 ile 12 yaş arası çocuklar için geliştirilmiştir. Yapay zeka, zorluk seviyesini, görsel karmaşıklığı ve etkileşim tarzını çocuğunuzun yaşına ve değerlendirilen düzeyine göre uyarlar."
+      },
+      {
+        "q": "Uygulama indirmem gerekiyor mu?",
+        "a": "İndirme gerekmez. kidi.ai herhangi bir modern web tarayıcısında çalışır — tablet, telefon, Chromebook ve masaüstü bilgisayarda. Çocuğunuzun ilerlemesi tüm cihazlarda otomatik olarak senkronize olur."
+      },
+      {
+        "q": "Çocuğumun verileri güvende mi?",
+        "a": "Kesinlikle. KVKK, COPPA ve GDPR uyumluyuz. Asla veri satmıyor, reklam göstermiyor ve yalnızca kişiselleştirilmiş öğrenme için gerekli olanı saklıyoruz."
+      },
+      {
+        "q": "Aboneliğimi istediğim zaman iptal edebilir miyim?",
+        "a": "Evet, tek tıklamayla istediğiniz zaman iptal edin. Soru yok, zorluk çıkarma yok. Verilerinize iptalden sonra 30 gün erişilebilir kalır."
+      },
+      {
+        "q": "Yapay zeka çocuğuma nasıl uyum sağlıyor?",
+        "a": "Motorumuz, dersi her zaman optimal zorluk bölgesinde tutmak için yanıt süresi, hata kalıpları, yeniden deneme davranışı ve katılım dahil oturum başına 40'tan fazla sinyali izler."
+      },
+      {
+        "q": "Deneme süresi var mı?",
+        "a": "Evet. Başlangıç planı sonsuza kadar ücretsizdir. Aile planı, kredi kartı gerektirmeden 14 günlük ücretsiz deneme içerir."
+      }
+    ]
+  },
+  "footer": {
+    "tagline": "Her çocuğu meraklı, özgüvenli bir öğrenci yapmak.",
+    "columns": [
+      {
+        "title": "Ürün",
+        "links": ["Özellikler", "Fiyatlar", "Değişiklikler", "Yol Haritası"]
+      },
+      {
+        "title": "Şirket",
+        "links": ["Hakkımızda", "Blog", "Kariyer", "Basın"]
+      },
+      {
+        "title": "Destek",
+        "links": ["Yardım Merkezi", "İletişim", "Gizlilik Politikası", "Şartlar"]
+      }
+    ],
+    "copyright": "© 2025 kidi.ai. Tüm hakları saklıdır."
+  }
+}

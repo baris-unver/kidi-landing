@@ -1,0 +1,202 @@
+{
+  "meta": {
+    "title": "kidi.ai — Learning that feels like play",
+    "description": "AI-powered personalized education for kids aged 4–12. Adaptive lessons, real progress, endless curiosity."
+  },
+  "nav": {
+    "links": [
+      { "label": "Features", "href": "#features" },
+      { "label": "How it works", "href": "#how-it-works" },
+      { "label": "Pricing", "href": "#pricing" },
+      { "label": "FAQ", "href": "#faq" }
+    ],
+    "cta": "Try for free"
+  },
+  "hero": {
+    "badge": "✨ Now in Early Access",
+    "title": "Learning that feels like",
+    "titleAccent": "play",
+    "subtitle": "kidi.ai adapts to your child's unique pace and curiosity — creating a school that never feels like school.",
+    "cta": "Start free trial",
+    "ctaSecondary": "Watch demo",
+    "trustLine": "Join 12,000+ families already learning"
+  },
+  "features": {
+    "title": "Built for the way kids actually learn",
+    "subtitle": "Not flashcards. Not boring videos. A living, breathing curriculum that grows with your child.",
+    "items": [
+      {
+        "icon": "🧠",
+        "title": "Adaptive AI Engine",
+        "desc": "Every lesson adjusts in real-time based on what your child gets right, wrong, or skips entirely."
+      },
+      {
+        "icon": "🎮",
+        "title": "Game-based Learning",
+        "desc": "Progress feels like leveling up. Kids earn rewards, unlock stories, and keep coming back on their own."
+      },
+      {
+        "icon": "📊",
+        "title": "Parent Dashboard",
+        "desc": "See exactly what your child learned today, where they're thriving, and where they need a little extra help."
+      },
+      {
+        "icon": "🌍",
+        "title": "Multilingual Support",
+        "desc": "Learn in English, Turkish, and more. Great for bilingual families and international schools."
+      },
+      {
+        "icon": "🔒",
+        "title": "Safe & Ad-free",
+        "desc": "No ads, no dark patterns, no social feeds. Just pure, joyful learning in a protected environment."
+      },
+      {
+        "icon": "⚡",
+        "title": "Instant Setup",
+        "desc": "Ready in under 2 minutes. No app downloads required — works on any tablet, phone, or computer."
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "From zero to learning in minutes",
+    "subtitle": "Three simple steps to unlock your child's potential.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Create your child's profile",
+        "desc": "Tell us your child's age, interests, and current level. Our AI builds a personalized curriculum on the spot."
+      },
+      {
+        "number": "02",
+        "title": "Start the first lesson",
+        "desc": "Your child dives into an interactive adventure. The AI watches, adapts, and keeps things perfectly challenging."
+      },
+      {
+        "number": "03",
+        "title": "Watch them grow",
+        "desc": "Get weekly progress reports. See skills develop. Celebrate milestones together as a family."
+      }
+    ]
+  },
+  "pricing": {
+    "title": "Simple, honest pricing",
+    "subtitle": "No hidden fees. Cancel anytime.",
+    "badge": "Most popular",
+    "plans": [
+      {
+        "name": "Starter",
+        "price": "Free",
+        "period": "",
+        "desc": "Perfect for exploring kidi.ai",
+        "features": [
+          "1 child profile",
+          "20 lessons per month",
+          "Basic progress reports",
+          "English only"
+        ],
+        "cta": "Get started free",
+        "highlighted": false
+      },
+      {
+        "name": "Family",
+        "price": "$9",
+        "period": "/ month",
+        "desc": "Everything your family needs",
+        "features": [
+          "Up to 4 child profiles",
+          "Unlimited lessons",
+          "Full analytics dashboard",
+          "All languages",
+          "Priority support"
+        ],
+        "cta": "Start free trial",
+        "highlighted": true
+      },
+      {
+        "name": "School",
+        "price": "Custom",
+        "period": "",
+        "desc": "For classrooms and institutions",
+        "features": [
+          "Unlimited students",
+          "Teacher dashboard",
+          "Curriculum alignment",
+          "API access",
+          "Dedicated support"
+        ],
+        "cta": "Contact us",
+        "highlighted": false
+      }
+    ]
+  },
+  "testimonials": {
+    "title": "Parents are saying",
+    "items": [
+      {
+        "quote": "My son actually asks to do his lessons now. That has never happened before in his life.",
+        "author": "Sarah M.",
+        "role": "Mom of a 7-year-old",
+        "avatar": "SM"
+      },
+      {
+        "quote": "We use kidi.ai for both English and Turkish. The language switching is seamless and our daughter loves it.",
+        "author": "Mehmet K.",
+        "role": "Parent, Istanbul",
+        "avatar": "MK"
+      },
+      {
+        "quote": "The parent dashboard is incredible. I finally understand where my child is actually struggling and thriving.",
+        "author": "Priya R.",
+        "role": "Mom of twins, age 9",
+        "avatar": "PR"
+      }
+    ]
+  },
+  "faq": {
+    "title": "Common questions",
+    "items": [
+      {
+        "q": "What ages is kidi.ai designed for?",
+        "a": "kidi.ai is built for children aged 4 to 12. The AI adapts the difficulty, visual complexity, and interaction style based on your child's age and assessed level."
+      },
+      {
+        "q": "Do I need to download an app?",
+        "a": "No download required. kidi.ai works in any modern web browser — on tablets, phones, Chromebooks, and desktops. Your child's progress syncs automatically across all devices."
+      },
+      {
+        "q": "Is my child's data safe?",
+        "a": "Absolutely. We are COPPA and GDPR compliant. We never sell data, never show ads, and store only what's needed for personalized learning."
+      },
+      {
+        "q": "Can I cancel my subscription anytime?",
+        "a": "Yes, cancel anytime with one click. No questions, no retention flows, no hassle. Your data stays accessible for 30 days after cancellation."
+      },
+      {
+        "q": "How does the AI adapt to my child?",
+        "a": "Our engine tracks 40+ signals per session — response time, error patterns, re-attempt behavior, and engagement — to keep lessons in the optimal challenge zone, always."
+      },
+      {
+        "q": "Is there a trial period?",
+        "a": "Yes. The Starter plan is free forever. The Family plan includes a 14-day free trial with no credit card required."
+      }
+    ]
+  },
+  "footer": {
+    "tagline": "Making every child a curious, confident learner.",
+    "columns": [
+      {
+        "title": "Product",
+        "links": ["Features", "Pricing", "Changelog", "Roadmap"]
+      },
+      {
+        "title": "Company",
+        "links": ["About", "Blog", "Careers", "Press"]
+      },
+      {
+        "title": "Support",
+        "links": ["Help Center", "Contact", "Privacy Policy", "Terms"]
+      }
+    ],
+    "copyright": "© 2025 kidi.ai. All rights reserved."
+  }
+}
