@@ -659,6 +659,75 @@ function ExportImportBar({ data, lang, onImport }) {
   )
 }
 
+// ─── WhatsApp Settings Editor ────────────────────────────────────────────────
+function WhatsAppEditor({ settings, onChange }) {
+  const set = (path, val) => {
+    const next = structuredClone(settings)
+    const parts = path.split('.')
+    let obj = next
+    parts.slice(0, -1).forEach(k => {
+      if (!obj[k]) obj[k] = {}
+      obj = obj[k]
+    })
+    obj[parts[parts.length - 1]] = val
+    onChange(next)
+  }
+
+  const wa = settings.whatsapp || {}
+
+  return (
+    <>
+      <div className="admin-card">
+        <div className="admin-card-title">Toggle</div>
+        <div className="admin-field">
+          <label>Enable WhatsApp button</label>
+          <label className="admin-toggle" style={{ marginTop: 4 }}>
+            <input type="checkbox" checked={!!wa.enabled} onChange={e => set('whatsapp.enabled', e.target.checked)} />
+            <span className="admin-toggle-slider" />
+          </label>
+        </div>
+      </div>
+
+      <div className="admin-card">
+        <div className="admin-card-title">Phone & Messages</div>
+        <Field label="Phone number (with country code, e.g. 905551234567)" value={wa.phoneNumber}
+          onChange={v => set('whatsapp.phoneNumber', v)} />
+        <Field label="Welcome message (shown in popup bubble)" value={wa.welcomeMessage}
+          onChange={v => set('whatsapp.welcomeMessage', v)} rows={3} />
+        <Field label="Pre-fill message (auto-filled in WhatsApp chat input)" value={wa.prefillMessage}
+          onChange={v => set('whatsapp.prefillMessage', v)} rows={2} />
+      </div>
+
+      <div className="admin-card">
+        <div className="admin-card-title">Agent Info</div>
+        <Field label="Agent name" value={wa.agentName}
+          onChange={v => set('whatsapp.agentName', v)} />
+        <ImageField label="Agent photo" value={wa.agentPhoto}
+          onChange={v => set('whatsapp.agentPhoto', v)} previewSize={64} />
+      </div>
+
+      <div className="admin-card">
+        <div className="admin-card-title">Position</div>
+        <div className="admin-field">
+          <label>Button position</label>
+          <select
+            value={wa.position || 'right'}
+            onChange={e => set('whatsapp.position', e.target.value)}
+            style={{
+              padding: '10px 14px', background: 'var(--bg)', border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font)', fontSize: 14,
+              color: 'var(--text)', width: '100%'
+            }}
+          >
+            <option value="right">Bottom Right</option>
+            <option value="left">Bottom Left</option>
+          </select>
+        </div>
+      </div>
+    </>
+  )
+}
+
 // ─── Section wrapper with language toggle ────────────────────────────────────
 function SectionWithLang({ contentEn, contentTr, onEnChange, onTrChange, editor }) {
   const [lang, setLang] = useState('en')
@@ -677,6 +746,7 @@ function SectionWithLang({ contentEn, contentTr, onEnChange, onTrChange, editor 
 // ─── Main Admin Page ───────────────────────────────────────────────────────────
 const NAV_SECTIONS = [
   { id: 'settings', icon: '⚙️', label: 'Settings', group: 'general' },
+  { id: 'whatsapp', icon: '📱', label: 'WhatsApp', group: 'general' },
   { id: 'seo', icon: '🔍', label: 'SEO / Meta', group: 'content' },
   { id: 'nav', icon: '🧭', label: 'Navigation', group: 'content' },
   { id: 'hero', icon: '🦸', label: 'Hero', group: 'content' },
@@ -703,6 +773,7 @@ const SECTION_EDITORS = {
 
 const SECTION_DESCRIPTIONS = {
   settings: 'Manage your logo, favicon, brand colors, section ordering and contact info.',
+  whatsapp: 'Configure the floating WhatsApp chat button — agent info, messages and position.',
   seo: 'Edit page title, meta description, keywords and Open Graph tags.',
   nav: 'Configure navigation links and CTA button text.',
   hero: 'Edit the hero section — headline, subtitle, CTA buttons.',
@@ -881,6 +952,10 @@ export default function Admin() {
 
             {isReady && activeSection === 'settings' && (
               <SettingsEditor settings={settingsData} onChange={handleSettingsChange} />
+            )}
+
+            {isReady && activeSection === 'whatsapp' && (
+              <WhatsAppEditor settings={settingsData} onChange={handleSettingsChange} />
             )}
 
             {isReady && EditorComp && (

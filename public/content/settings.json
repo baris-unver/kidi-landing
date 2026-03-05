@@ -56,5 +56,14 @@
       "id": "faq",
       "visible": true
     }
-  ]
+  ],
+  "whatsapp": {
+    "enabled": false,
+    "phoneNumber": "",
+    "agentName": "Support",
+    "agentPhoto": "",
+    "welcomeMessage": "Hi! How can we help you?",
+    "prefillMessage": "Hi, I have a question about kidi.ai",
+    "position": "right"
+  }
 }

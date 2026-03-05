@@ -1,6 +1,7 @@
 import Nav from '../components/Nav'
 import Hero from '../components/Hero'
 import { Features, HowItWorks, Pricing, Testimonials, FAQ, Footer } from '../components/Sections'
+import WhatsAppButton from '../components/WhatsAppButton'
 import { useSite } from '../context/SiteContext'
 
 const SECTION_COMPONENTS = {
@@ -45,6 +46,7 @@ export default function Landing() {
         })}
       </main>
       <Footer />
+      <WhatsAppButton />
     </>
   )
 }
