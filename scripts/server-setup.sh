@@ -2,80 +2,81 @@
 set -euo pipefail
 
 # ============================================================================
-# Server Setup Script for kidi-landing
+# Server Setup Script for kidi-landing (Docker)
 # Run this ONCE on your DigitalOcean Droplet to:
-#   1. Stop and remove WordPress (Apache/MySQL/PHP)
-#   2. Install Node.js, PM2, Nginx
-#   3. Clone the repo and start the app
-#   4. Configure Nginx as a reverse proxy
-#
-# Usage:
-#   ssh root@YOUR_SERVER_IP
-#   bash <(curl -s https://raw.githubusercontent.com/baris-unver/kidi-landing/main/scripts/server-setup.sh)
-#
-# Or copy this file to the server and run:
-#   chmod +x server-setup.sh && ./server-setup.sh
+#   1. Remove WordPress (Apache/MySQL/PHP) completely
+#   2. Install Docker Engine + Compose plugin
+#   3. Clone the repo
+#   4. Obtain SSL certificate for kidi.ai
+#   5. Start the app via docker compose
 # ============================================================================
 
 APP_DIR="/opt/kidi-landing"
-DOMAIN="${1:-_}"  # Pass your domain as first arg, or _ for default
+DOMAIN="kidi.ai"
 
 echo "=========================================="
-echo "  kidi-landing Server Setup"
+echo "  kidi-landing Docker Setup"
 echo "=========================================="
 
-# ── Step 1: Stop and remove WordPress stack ──
+# ── Step 1: Remove WordPress stack completely ──
 echo ""
-echo "[1/6] Stopping and removing WordPress..."
+echo "[1/6] Removing WordPress stack..."
 
-# Stop services
 systemctl stop apache2 2>/dev/null || true
 systemctl stop mysql 2>/dev/null || true
 systemctl stop mariadb 2>/dev/null || true
+systemctl stop nginx 2>/dev/null || true
 
-# Disable services
 systemctl disable apache2 2>/dev/null || true
 systemctl disable mysql 2>/dev/null || true
 systemctl disable mariadb 2>/dev/null || true
+systemctl disable nginx 2>/dev/null || true
 
-# Remove WordPress files
-rm -rf /var/www/html/wordpress 2>/dev/null || true
-rm -rf /var/www/html/wp-* 2>/dev/null || true
-rm -f /var/www/html/index.php 2>/dev/null || true
-rm -f /var/www/html/xmlrpc.php 2>/dev/null || true
-
-# Purge Apache and PHP
 apt-get purge -y apache2 apache2-utils libapache2-mod-php* 2>/dev/null || true
 apt-get purge -y php* 2>/dev/null || true
+apt-get purge -y mysql-server mysql-client mysql-common mariadb-server mariadb-client mariadb-common 2>/dev/null || true
+apt-get purge -y nginx nginx-common 2>/dev/null || true
 
-# Keep MySQL/MariaDB data intact but stop it (in case you need the data later)
-systemctl stop mysql 2>/dev/null || true
-systemctl stop mariadb 2>/dev/null || true
+rm -rf /var/www/html 2>/dev/null || true
+rm -rf /var/lib/mysql 2>/dev/null || true
+rm -rf /etc/mysql 2>/dev/null || true
+rm -rf /etc/apache2 2>/dev/null || true
+rm -rf /etc/nginx 2>/dev/null || true
 
-apt-get autoremove -y 2>/dev/null || true
-echo "  WordPress stack removed."
+apt-get autoremove -y
+apt-get autoclean -y
+echo "  Done."
 
-# ── Step 2: Install Node.js ──
+# ── Step 2: Install Docker Engine ──
 echo ""
-echo "[2/6] Installing Node.js 20 LTS..."
+echo "[2/6] Installing Docker..."
 
-if ! command -v node &>/dev/null; then
-  curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-  apt-get install -y nodejs
+if ! command -v docker &>/dev/null; then
+  apt-get update
+  apt-get install -y ca-certificates curl gnupg
+
+  install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  chmod a+r /etc/apt/keyrings/docker.gpg
+
+  echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+  apt-get update
+  apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 fi
-echo "  Node.js $(node --version) installed."
 
-# ── Step 3: Install PM2 ──
+systemctl enable docker
+systemctl start docker
+echo "  Docker $(docker --version) installed."
+
+# ── Step 3: Clone repository ──
 echo ""
-echo "[3/6] Installing PM2..."
+echo "[3/6] Cloning repository..."
 
-npm install -g pm2
-pm2 startup systemd -u root --hp /root 2>/dev/null || true
-echo "  PM2 installed."
-
-# ── Step 4: Clone repo and set up app ──
-echo ""
-echo "[4/6] Setting up application..."
+apt-get install -y git 2>/dev/null || true
 
 if [ -d "$APP_DIR" ]; then
   cd "$APP_DIR"
@@ -84,82 +85,88 @@ else
   git clone https://github.com/baris-unver/kidi-landing.git "$APP_DIR"
   cd "$APP_DIR"
 fi
+echo "  Done."
 
-npm ci --production
-npm run build
+# ── Step 4: Create .env ──
+echo ""
+echo "[4/6] Configuring environment..."
 
-# Create .env if it doesn't exist
-if [ ! -f .env ]; then
-  cp .env.example .env
-  echo ""
-  echo "  *** IMPORTANT: Edit /opt/kidi-landing/.env with your real values ***"
-  echo "  nano /opt/kidi-landing/.env"
-  echo ""
+if [ ! -f "$APP_DIR/.env" ]; then
+  cat > "$APP_DIR/.env" <<'ENVFILE'
+ADMIN_PASSWORD=change-me-before-deploy
+GITHUB_TOKEN=
+GITHUB_REPO=baris-unver/kidi-landing
+GITHUB_BRANCH=main
+ENVFILE
+  echo "  .env created. Edit it later: nano $APP_DIR/.env"
+else
+  echo "  .env already exists, skipping."
 fi
 
-echo "  Application built."
-
-# ── Step 5: Start with PM2 ──
+# ── Step 5: Obtain SSL certificate ──
 echo ""
-echo "[5/6] Starting application with PM2..."
+echo "[5/6] Obtaining SSL certificate for ${DOMAIN}..."
 
-cd "$APP_DIR"
-pm2 delete kidi-landing 2>/dev/null || true
-pm2 start server.js --name kidi-landing --env production
-pm2 save
-echo "  App running on port 3000."
+apt-get install -y certbot 2>/dev/null || true
 
-# ── Step 6: Configure Nginx ──
-echo ""
-echo "[6/6] Configuring Nginx..."
+if [ ! -d "/etc/letsencrypt/live/${DOMAIN}" ]; then
+  certbot certonly --standalone --non-interactive --agree-tos \
+    --email admin@${DOMAIN} \
+    -d ${DOMAIN} -d www.${DOMAIN} || {
+    echo "  SSL cert failed (domain might not point to this server yet)."
+    echo "  Falling back to HTTP-only nginx config..."
 
-apt-get install -y nginx
-
-cat > /etc/nginx/sites-available/kidi-landing <<NGINX
+    cat > "$APP_DIR/nginx/default.conf" <<'NGINXHTTP'
 server {
     listen 80;
-    server_name ${DOMAIN};
+    server_name kidi.ai www.kidi.ai;
 
     location / {
-        proxy_pass http://127.0.0.1:3000;
+        proxy_pass http://app:3000;
         proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-        proxy_cache_bypass \$http_upgrade;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
     }
 }
-NGINX
+NGINXHTTP
+  }
 
-# Enable the site
-ln -sf /etc/nginx/sites-available/kidi-landing /etc/nginx/sites-enabled/kidi-landing
-rm -f /etc/nginx/sites-enabled/default
+  # Auto-renewal cron
+  echo "0 3 * * * certbot renew --quiet --deploy-hook 'cd $APP_DIR && docker compose restart nginx'" \
+    | crontab -
+  echo "  SSL configured with auto-renewal."
+else
+  echo "  SSL cert already exists, skipping."
+fi
 
-# Test and reload
-nginx -t
-systemctl enable nginx
-systemctl restart nginx
+# ── Step 6: Start containers ──
+echo ""
+echo "[6/6] Starting Docker containers..."
+
+cd "$APP_DIR"
+docker compose up -d --build
+echo "  Containers started."
 
 echo ""
 echo "=========================================="
 echo "  Setup complete!"
 echo "=========================================="
 echo ""
-echo "  App URL:    http://${DOMAIN}"
-echo "  Admin URL:  http://${DOMAIN}/admin"
+echo "  App URL:    https://${DOMAIN}"
+echo "  Admin URL:  https://${DOMAIN}/admin"
 echo "  App dir:    ${APP_DIR}"
 echo ""
-echo "  Next steps:"
-echo "  1. Edit .env:  nano ${APP_DIR}/.env"
-echo "  2. Set these GitHub repo secrets for CI/CD:"
-echo "     - SERVER_HOST     (your droplet IP)"
-echo "     - SERVER_USER     (root or deploy user)"
-echo "     - SERVER_SSH_KEY  (private SSH key)"
+echo "  Manage:"
+echo "    docker compose logs -f        # view logs"
+echo "    docker compose restart        # restart"
+echo "    docker compose down           # stop"
 echo ""
-echo "  3. (Optional) Set up SSL with Let's Encrypt:"
-echo "     apt install certbot python3-certbot-nginx"
-echo "     certbot --nginx -d yourdomain.com"
+echo "  Next: edit .env with your real values:"
+echo "    nano ${APP_DIR}/.env"
+echo "    docker compose restart app"
 echo ""

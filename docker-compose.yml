@@ -1,0 +1,20 @@
+services:
+  app:
+    image: ghcr.io/baris-unver/kidi-landing:latest
+    build: .
+    env_file: .env
+    restart: always
+    expose:
+      - "3000"
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - app
+    restart: always
