@@ -287,6 +287,10 @@ function SettingsEditor({ settings, onChange }) {
           onChange={v => set('social.twitter', v)} />
         <Field label="Instagram" value={settings.social?.instagram}
           onChange={v => set('social.instagram', v)} />
+        <Field label="TikTok" value={settings.social?.tiktok}
+          onChange={v => set('social.tiktok', v)} />
+        <Field label="YouTube" value={settings.social?.youtube}
+          onChange={v => set('social.youtube', v)} />
         <Field label="LinkedIn" value={settings.social?.linkedin}
           onChange={v => set('social.linkedin', v)} />
       </div>
@@ -545,14 +549,19 @@ function FaqEditor({ content, onChange }) {
 function FooterEditor({ content, onChange }) {
   const { set, setArr, addItem, removeItem } = useContentHelpers(content, onChange)
 
-  const setFooterLink = (colIdx, linkIdx, val) => {
+  const setFooterLinkField = (colIdx, linkIdx, field, val) => {
     const next = structuredClone(content)
-    next.footer.columns[colIdx].links[linkIdx] = val
+    const link = next.footer.columns[colIdx].links[linkIdx]
+    if (typeof link === 'string') {
+      next.footer.columns[colIdx].links[linkIdx] = { label: link, href: '#', [field]: val }
+    } else {
+      next.footer.columns[colIdx].links[linkIdx] = { ...link, [field]: val }
+    }
     onChange(next)
   }
   const addFooterLink = (colIdx) => {
     const next = structuredClone(content)
-    next.footer.columns[colIdx].links.push('')
+    next.footer.columns[colIdx].links.push({ label: '', href: '#' })
     onChange(next)
   }
   const removeFooterLink = (colIdx, linkIdx) => {
@@ -560,6 +569,8 @@ function FooterEditor({ content, onChange }) {
     next.footer.columns[colIdx].links.splice(linkIdx, 1)
     onChange(next)
   }
+
+  const inputStyle = { flex: 1, padding: '8px 12px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font)', fontSize: 14, color: 'var(--text)' }
 
   return (
     <div className="admin-card">
@@ -571,13 +582,21 @@ function FooterEditor({ content, onChange }) {
           <Field label="Column title" value={col.title} onChange={v => setArr('footer.columns', ci, 'title', v)} />
           <div style={{ marginTop: 8 }}>
             <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 8, color: 'var(--text-secondary)' }}>Links</label>
-            {col.links?.map((link, li) => (
-              <div key={li} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
-                <input type="text" value={link} onChange={e => setFooterLink(ci, li, e.target.value)}
-                  style={{ flex: 1, padding: '8px 12px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font)', fontSize: 14, color: 'var(--text)' }} />
-                <button className="btn btn-ghost admin-remove-btn" onClick={() => removeFooterLink(ci, li)} title="Remove">✕</button>
-              </div>
-            ))}
+            {col.links?.map((link, li) => {
+              const label = typeof link === 'string' ? link : (link.label || '')
+              const href = typeof link === 'string' ? '#' : (link.href || '#')
+              return (
+                <div key={li} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
+                  <input type="text" value={label} placeholder="Label"
+                    onChange={e => setFooterLinkField(ci, li, 'label', e.target.value)}
+                    style={inputStyle} />
+                  <input type="text" value={href} placeholder="URL (e.g. /about or https://...)"
+                    onChange={e => setFooterLinkField(ci, li, 'href', e.target.value)}
+                    style={inputStyle} />
+                  <button className="btn btn-ghost admin-remove-btn" onClick={() => removeFooterLink(ci, li)} title="Remove">✕</button>
+                </div>
+              )
+            })}
             <AddItemButton label="Add link" onClick={() => addFooterLink(ci)} />
           </div>
         </div>

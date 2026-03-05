@@ -182,9 +182,11 @@ export function Footer() {
               <div key={i}>
                 <div className="footer-col-title">{col.title}</div>
                 <ul className="footer-col-links">
-                  {col.links.map((link, j) => (
-                    <li key={j}><a href="#">{link}</a></li>
-                  ))}
+                  {col.links.map((link, j) => {
+                    const label = typeof link === 'string' ? link : link.label
+                    const href = typeof link === 'string' ? '#' : (link.href || '#')
+                    return <li key={j}><a href={href}>{label}</a></li>
+                  })}
                 </ul>
               </div>
             ))}

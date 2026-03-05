@@ -192,15 +192,30 @@
     "columns": [
       {
         "title": "Ürün",
-        "links": ["Özellikler", "Fiyatlar", "Değişiklikler", "Yol Haritası"]
+        "links": [
+          { "label": "Özellikler", "href": "#features" },
+          { "label": "Fiyatlar", "href": "#pricing" },
+          { "label": "Değişiklikler", "href": "#" },
+          { "label": "Yol Haritası", "href": "#" }
+        ]
       },
       {
         "title": "Şirket",
-        "links": ["Hakkımızda", "Blog", "Kariyer", "Basın"]
+        "links": [
+          { "label": "Hakkımızda", "href": "#" },
+          { "label": "Blog", "href": "#" },
+          { "label": "Kariyer", "href": "#" },
+          { "label": "Basın", "href": "#" }
+        ]
       },
       {
         "title": "Destek",
-        "links": ["Yardım Merkezi", "İletişim", "Gizlilik Politikası", "Şartlar"]
+        "links": [
+          { "label": "Yardım Merkezi", "href": "#" },
+          { "label": "İletişim", "href": "#" },
+          { "label": "Gizlilik Politikası", "href": "#" },
+          { "label": "Şartlar", "href": "#" }
+        ]
       }
     ],
     "copyright": "© 2025 kidi.ai. Tüm hakları saklıdır."

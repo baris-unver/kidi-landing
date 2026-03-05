@@ -192,15 +192,30 @@
     "columns": [
       {
         "title": "Product",
-        "links": ["Features", "Pricing", "Changelog", "Roadmap"]
+        "links": [
+          { "label": "Features", "href": "#features" },
+          { "label": "Pricing", "href": "#pricing" },
+          { "label": "Changelog", "href": "#" },
+          { "label": "Roadmap", "href": "#" }
+        ]
       },
       {
         "title": "Company",
-        "links": ["About", "Blog", "Careers", "Press"]
+        "links": [
+          { "label": "About", "href": "#" },
+          { "label": "Blog", "href": "#" },
+          { "label": "Careers", "href": "#" },
+          { "label": "Press", "href": "#" }
+        ]
       },
       {
         "title": "Support",
-        "links": ["Help Center", "Contact", "Privacy Policy", "Terms"]
+        "links": [
+          { "label": "Help Center", "href": "#" },
+          { "label": "Contact", "href": "#" },
+          { "label": "Privacy Policy", "href": "#" },
+          { "label": "Terms", "href": "#" }
+        ]
       }
     ],
     "copyright": "© 2025 kidi.ai. All rights reserved."
