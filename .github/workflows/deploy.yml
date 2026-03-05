@@ -3,6 +3,9 @@ name: Deploy to DigitalOcean
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'public/content/**'
+      - '**.md'
   workflow_dispatch:
 
 env:

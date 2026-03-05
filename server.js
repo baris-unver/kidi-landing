@@ -1,5 +1,6 @@
 import express from 'express'
 import crypto from 'crypto'
+import fs from 'fs/promises'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -9,9 +10,8 @@ app.use(express.json({ limit: '10mb' }))
 
 const PORT = process.env.PORT || 3000
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin'
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN
-const GITHUB_REPO = process.env.GITHUB_REPO
-const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main'
+const DATA_DIR = path.join(__dirname, 'data', 'content')
+const DIST_DIR = path.join(__dirname, 'dist')
 
 const sessions = new Map()
 
@@ -39,39 +39,25 @@ app.post('/api/auth/logout', requireAuth, (req, res) => {
   res.json({ ok: true })
 })
 
-app.post('/api/save', requireAuth, async (req, res) => {
-  const { filePath, content, commitMessage } = req.body
-  if (!GITHUB_TOKEN || !GITHUB_REPO) {
-    return res.status(500).json({ error: 'GitHub env vars not configured (GITHUB_TOKEN / GITHUB_REPO)' })
-  }
+const ALLOWED_FILES = ['settings.json', 'en.json', 'tr.json']
 
-  const apiBase = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`
-  const headers = {
-    Authorization: `Bearer ${GITHUB_TOKEN}`,
-    'Content-Type': 'application/json',
-    Accept: 'application/vnd.github+json',
+app.post('/api/save', requireAuth, async (req, res) => {
+  const { filePath, content } = req.body
+
+  const fileName = path.basename(filePath)
+  if (!ALLOWED_FILES.includes(fileName)) {
+    return res.status(400).json({ error: `Not allowed: ${fileName}` })
   }
 
   try {
-    const getRes = await fetch(`${apiBase}?ref=${GITHUB_BRANCH}`, { headers })
-    if (!getRes.ok) throw new Error(`GitHub GET failed: ${getRes.status}`)
-    const { sha } = await getRes.json()
+    await fs.mkdir(DATA_DIR, { recursive: true })
 
-    const putRes = await fetch(apiBase, {
-      method: 'PUT',
-      headers,
-      body: JSON.stringify({
-        message: commitMessage,
-        content: Buffer.from(JSON.stringify(content, null, 2)).toString('base64'),
-        sha,
-        branch: GITHUB_BRANCH,
-      }),
-    })
+    const json = JSON.stringify(content, null, 2)
+    const dataPath = path.join(DATA_DIR, fileName)
+    await fs.writeFile(dataPath, json, 'utf-8')
 
-    if (!putRes.ok) {
-      const err = await putRes.json()
-      throw new Error(err.message || `GitHub PUT failed: ${putRes.status}`)
-    }
+    const distPath = path.join(DIST_DIR, 'content', fileName)
+    await fs.writeFile(distPath, json, 'utf-8').catch(() => {})
 
     res.json({ ok: true })
   } catch (e) {
@@ -79,12 +65,14 @@ app.post('/api/save', requireAuth, async (req, res) => {
   }
 })
 
-app.use(express.static(path.join(__dirname, 'dist')))
+app.use('/content', express.static(DATA_DIR))
+app.use(express.static(DIST_DIR))
 
 app.get('/{*splat}', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+  res.sendFile(path.join(DIST_DIR, 'index.html'))
 })
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+  await fs.mkdir(DATA_DIR, { recursive: true }).catch(() => {})
   console.log(`Server running on port ${PORT}`)
 })

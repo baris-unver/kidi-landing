@@ -17,14 +17,14 @@ async function apiAuth(password) {
   return data.token
 }
 
-async function apiSave(filePath, content, commitMessage) {
+async function apiSave(filePath, content) {
   const res = await fetch('/api/save', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${getToken()}`,
     },
-    body: JSON.stringify({ filePath, content, commitMessage }),
+    body: JSON.stringify({ filePath, content }),
   })
   const data = await res.json()
   if (!res.ok) throw new Error(data.error || 'Save failed')
@@ -629,17 +629,17 @@ export default function Admin() {
   const handleTrChange = (v) => { setContentTr(v); setDirty(true) }
 
   const handleSave = async () => {
-    setToast({ msg: 'Saving to GitHub...', type: 'saving' })
+    setToast({ msg: 'Saving...', type: 'saving' })
     try {
       const tasks = []
       if (settingsData && JSON.stringify(settingsData) !== snapshot.settings) {
-        tasks.push(apiSave('public/content/settings.json', settingsData, 'Admin: update settings'))
+        tasks.push(apiSave('content/settings.json', settingsData))
       }
       if (contentEn && JSON.stringify(contentEn) !== snapshot.en) {
-        tasks.push(apiSave('public/content/en.json', contentEn, 'Admin: update EN content'))
+        tasks.push(apiSave('content/en.json', contentEn))
       }
       if (contentTr && JSON.stringify(contentTr) !== snapshot.tr) {
-        tasks.push(apiSave('public/content/tr.json', contentTr, 'Admin: update TR content'))
+        tasks.push(apiSave('content/tr.json', contentTr))
       }
 
       if (tasks.length === 0) {
@@ -654,7 +654,7 @@ export default function Admin() {
         tr: JSON.stringify(contentTr),
       })
       setDirty(false)
-      setToast({ msg: '✓ Saved! Deployment triggered — live in ~60s', type: 'success' })
+      setToast({ msg: '✓ Saved! Changes are live.', type: 'success' })
     } catch (e) {
       if (e.message?.includes('Unauthorized')) {
         setToast({ msg: '✗ Session expired. Please sign in again.', type: 'error' })
@@ -713,7 +713,7 @@ export default function Admin() {
             <div style={{ padding: '0 20px 8px', fontSize: 11, fontWeight: 800, textTransform: 'uppercase',
               letterSpacing: '0.1em', color: 'var(--text-muted)' }}>Deploy</div>
             <div style={{ padding: '8px 20px', fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5, fontWeight: 600 }}>
-              Changes save to GitHub → auto-deploy on DigitalOcean / Netlify / Vercel.
+              Changes are saved directly and go live instantly.
             </div>
           </div>
         </aside>
