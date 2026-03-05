@@ -953,6 +953,44 @@ button { font-family: var(--font); cursor: pointer; border: none; }
   color: var(--text-secondary);
   margin-bottom: 32px;
 }
+.admin-nav-group-title {
+  padding: 16px 20px 6px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+.admin-nav-group-title:first-child { padding-top: 8px; }
+
+.admin-lang-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  padding: 4px;
+  width: fit-content;
+}
+.admin-lang-tab {
+  padding: 8px 20px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.admin-lang-tab:hover { color: var(--text); }
+.admin-lang-tab.active {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
 .admin-card {
   background: var(--surface);
   border: 1px solid var(--border);

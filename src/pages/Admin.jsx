@@ -255,7 +255,8 @@ function SettingsEditor({ settings, onChange }) {
   )
 }
 
-function ContentEditor({ content, onChange }) {
+// ─── Content helpers (shared by all section editors) ─────────────────────────
+function useContentHelpers(content, onChange) {
   const set = (path, val) => {
     const parts = path.split('.')
     const next = structuredClone(content)
@@ -292,36 +293,227 @@ function ContentEditor({ content, onChange }) {
     onChange(next)
   }
 
+  return { set, setArr, addItem, removeItem }
+}
+
+// ─── Language Toggle ─────────────────────────────────────────────────────────
+function LangTabs({ lang, onLangChange }) {
+  return (
+    <div className="admin-lang-tabs">
+      <button className={`admin-lang-tab ${lang === 'en' ? 'active' : ''}`} onClick={() => onLangChange('en')}>EN</button>
+      <button className={`admin-lang-tab ${lang === 'tr' ? 'active' : ''}`} onClick={() => onLangChange('tr')}>TR</button>
+    </div>
+  )
+}
+
+// ─── Individual Section Editors ──────────────────────────────────────────────
+function SeoEditor({ content, onChange }) {
+  const { set } = useContentHelpers(content, onChange)
+  return (
+    <div className="admin-card">
+      <Field label="Page title" value={content.meta?.title} onChange={v => set('meta.title', v)} />
+      <Field label="Meta description" value={content.meta?.description}
+        onChange={v => set('meta.description', v)} rows={2} />
+      <Field label="Keywords (comma-separated)" value={content.meta?.keywords}
+        onChange={v => set('meta.keywords', v)} />
+      <Field label="OG title (leave empty to use page title)" value={content.meta?.ogTitle}
+        onChange={v => set('meta.ogTitle', v)} />
+      <Field label="OG description (leave empty to use meta description)" value={content.meta?.ogDescription}
+        onChange={v => set('meta.ogDescription', v)} rows={2} />
+    </div>
+  )
+}
+
+function NavEditor({ content, onChange }) {
+  const { set, setArr, addItem, removeItem } = useContentHelpers(content, onChange)
+  return (
+    <div className="admin-card">
+      <Field label="CTA button text" value={content.nav?.cta} onChange={v => set('nav.cta', v)} />
+      {content.nav?.links?.map((link, i) => (
+        <div key={i}>
+          <ListItemHeader index={i} label="Link" onRemove={() => removeItem('nav.links', i)} />
+          <div className="admin-field-row">
+            <Field label="Label" value={link.label} onChange={v => setArr('nav.links', i, 'label', v)} />
+            <Field label="Href" value={link.href} onChange={v => setArr('nav.links', i, 'href', v)} />
+          </div>
+        </div>
+      ))}
+      <AddItemButton label="Add link" onClick={() => addItem('nav.links', { label: '', href: '#' })} />
+    </div>
+  )
+}
+
+function HeroEditor({ content, onChange }) {
+  const { set } = useContentHelpers(content, onChange)
+  return (
+    <div className="admin-card">
+      <Field label="Badge text" value={content.hero?.badge} onChange={v => set('hero.badge', v)} />
+      <div className="admin-field-row">
+        <Field label="Title (first line)" value={content.hero?.title} onChange={v => set('hero.title', v)} />
+        <Field label="Title accent word" value={content.hero?.titleAccent} onChange={v => set('hero.titleAccent', v)} />
+      </div>
+      <Field label="Subtitle" value={content.hero?.subtitle} onChange={v => set('hero.subtitle', v)} rows={2} />
+      <div className="admin-field-row">
+        <Field label="Primary CTA button" value={content.hero?.cta} onChange={v => set('hero.cta', v)} />
+        <Field label="Secondary CTA button" value={content.hero?.ctaSecondary} onChange={v => set('hero.ctaSecondary', v)} />
+      </div>
+      <Field label="Trust line (below buttons)" value={content.hero?.trustLine} onChange={v => set('hero.trustLine', v)} />
+    </div>
+  )
+}
+
+function FeaturesEditor({ content, onChange }) {
+  const { set, setArr, addItem, removeItem } = useContentHelpers(content, onChange)
+  return (
+    <div className="admin-card">
+      <Field label="Section title" value={content.features?.title} onChange={v => set('features.title', v)} />
+      <Field label="Section subtitle" value={content.features?.subtitle}
+        onChange={v => set('features.subtitle', v)} rows={2} />
+      {content.features?.items?.map((item, i) => (
+        <div key={i}>
+          <ListItemHeader index={i} label="Feature" onRemove={() => removeItem('features.items', i)} />
+          <div className="admin-field-row">
+            <Field label="Icon (emoji)" value={item.icon} onChange={v => setArr('features.items', i, 'icon', v)} />
+            <Field label="Title" value={item.title} onChange={v => setArr('features.items', i, 'title', v)} />
+          </div>
+          <Field label="Description" value={item.desc} onChange={v => setArr('features.items', i, 'desc', v)} rows={2} />
+        </div>
+      ))}
+      <AddItemButton label="Add feature" onClick={() => addItem('features.items', { icon: '✨', title: '', desc: '' })} />
+    </div>
+  )
+}
+
+function HowItWorksEditor({ content, onChange }) {
+  const { set, setArr, addItem, removeItem } = useContentHelpers(content, onChange)
+  return (
+    <div className="admin-card">
+      <Field label="Section title" value={content.howItWorks?.title} onChange={v => set('howItWorks.title', v)} />
+      <Field label="Section subtitle" value={content.howItWorks?.subtitle} onChange={v => set('howItWorks.subtitle', v)} rows={2} />
+      {content.howItWorks?.steps?.map((step, i) => (
+        <div key={i}>
+          <ListItemHeader index={i} label="Step" onRemove={() => removeItem('howItWorks.steps', i)} />
+          <Field label="Title" value={step.title} onChange={v => setArr('howItWorks.steps', i, 'title', v)} />
+          <Field label="Description" value={step.desc} onChange={v => setArr('howItWorks.steps', i, 'desc', v)} rows={2} />
+        </div>
+      ))}
+      <AddItemButton label="Add step" onClick={() => addItem('howItWorks.steps', { number: String(content.howItWorks.steps.length + 1).padStart(2, '0'), title: '', desc: '' })} />
+    </div>
+  )
+}
+
+function PricingEditor({ content, onChange }) {
+  const { set, setArr, addItem, removeItem } = useContentHelpers(content, onChange)
+
   const setPlanFeature = (planIdx, featIdx, val) => {
     const next = structuredClone(content)
     next.pricing.plans[planIdx].features[featIdx] = val
     onChange(next)
   }
-
   const addPlanFeature = (planIdx) => {
     const next = structuredClone(content)
     next.pricing.plans[planIdx].features.push('')
     onChange(next)
   }
-
   const removePlanFeature = (planIdx, featIdx) => {
     const next = structuredClone(content)
     next.pricing.plans[planIdx].features.splice(featIdx, 1)
     onChange(next)
   }
 
+  return (
+    <div className="admin-card">
+      <Field label="Section title" value={content.pricing?.title} onChange={v => set('pricing.title', v)} />
+      <Field label="Section subtitle" value={content.pricing?.subtitle} onChange={v => set('pricing.subtitle', v)} />
+      <Field label="Popular badge text" value={content.pricing?.badge} onChange={v => set('pricing.badge', v)} />
+      {content.pricing?.plans?.map((plan, i) => (
+        <div key={i}>
+          <ListItemHeader index={i} label={`Plan: ${plan.name || ''}`} onRemove={() => removeItem('pricing.plans', i)} />
+          <div className="admin-field-row">
+            <Field label="Plan name" value={plan.name} onChange={v => setArr('pricing.plans', i, 'name', v)} />
+            <Field label="Price" value={plan.price} onChange={v => setArr('pricing.plans', i, 'price', v)} />
+          </div>
+          <div className="admin-field-row">
+            <Field label="Period (e.g. / month)" value={plan.period} onChange={v => setArr('pricing.plans', i, 'period', v)} />
+            <Field label="CTA button text" value={plan.cta} onChange={v => setArr('pricing.plans', i, 'cta', v)} />
+          </div>
+          <Field label="Short description" value={plan.desc} onChange={v => setArr('pricing.plans', i, 'desc', v)} />
+          <div className="admin-field">
+            <label>Highlighted (popular)</label>
+            <label className="admin-toggle" style={{ marginTop: 4 }}>
+              <input type="checkbox" checked={!!plan.highlighted} onChange={e => setArr('pricing.plans', i, 'highlighted', e.target.checked)} />
+              <span className="admin-toggle-slider" />
+            </label>
+          </div>
+          <div style={{ marginTop: 8 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 8, color: 'var(--text-secondary)' }}>Feature checklist</label>
+            {plan.features?.map((feat, fi) => (
+              <div key={fi} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
+                <input type="text" value={feat} onChange={e => setPlanFeature(i, fi, e.target.value)}
+                  style={{ flex: 1, padding: '8px 12px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font)', fontSize: 14, color: 'var(--text)' }} />
+                <button className="btn btn-ghost admin-remove-btn" onClick={() => removePlanFeature(i, fi)} title="Remove">✕</button>
+              </div>
+            ))}
+            <AddItemButton label="Add feature" onClick={() => addPlanFeature(i)} />
+          </div>
+        </div>
+      ))}
+      <AddItemButton label="Add plan" onClick={() => addItem('pricing.plans', { name: '', price: '', period: '', desc: '', features: [], cta: '', highlighted: false })} />
+    </div>
+  )
+}
+
+function TestimonialsEditor({ content, onChange }) {
+  const { set, setArr, addItem, removeItem } = useContentHelpers(content, onChange)
+  return (
+    <div className="admin-card">
+      <Field label="Section title" value={content.testimonials?.title} onChange={v => set('testimonials.title', v)} />
+      {content.testimonials?.items?.map((t, i) => (
+        <div key={i}>
+          <ListItemHeader index={i} label="Testimonial" onRemove={() => removeItem('testimonials.items', i)} />
+          <Field label="Quote" value={t.quote} onChange={v => setArr('testimonials.items', i, 'quote', v)} rows={2} />
+          <div className="admin-field-row">
+            <Field label="Name" value={t.author} onChange={v => setArr('testimonials.items', i, 'author', v)} />
+            <Field label="Role / Label" value={t.role} onChange={v => setArr('testimonials.items', i, 'role', v)} />
+          </div>
+          <Field label="Avatar initials (2 chars)" value={t.avatar} onChange={v => setArr('testimonials.items', i, 'avatar', v)} />
+        </div>
+      ))}
+      <AddItemButton label="Add testimonial" onClick={() => addItem('testimonials.items', { quote: '', author: '', role: '', avatar: '' })} />
+    </div>
+  )
+}
+
+function FaqEditor({ content, onChange }) {
+  const { set, setArr, addItem, removeItem } = useContentHelpers(content, onChange)
+  return (
+    <div className="admin-card">
+      <Field label="Section title" value={content.faq?.title} onChange={v => set('faq.title', v)} />
+      {content.faq?.items?.map((item, i) => (
+        <div key={i}>
+          <ListItemHeader index={i} label="Q&A" onRemove={() => removeItem('faq.items', i)} />
+          <Field label="Question" value={item.q} onChange={v => setArr('faq.items', i, 'q', v)} />
+          <Field label="Answer" value={item.a} onChange={v => setArr('faq.items', i, 'a', v)} rows={3} />
+        </div>
+      ))}
+      <AddItemButton label="Add Q&A" onClick={() => addItem('faq.items', { q: '', a: '' })} />
+    </div>
+  )
+}
+
+function FooterEditor({ content, onChange }) {
+  const { set, setArr, addItem, removeItem } = useContentHelpers(content, onChange)
+
   const setFooterLink = (colIdx, linkIdx, val) => {
     const next = structuredClone(content)
     next.footer.columns[colIdx].links[linkIdx] = val
     onChange(next)
   }
-
   const addFooterLink = (colIdx) => {
     const next = structuredClone(content)
     next.footer.columns[colIdx].links.push('')
     onChange(next)
   }
-
   const removeFooterLink = (colIdx, linkIdx) => {
     const next = structuredClone(content)
     next.footer.columns[colIdx].links.splice(linkIdx, 1)
@@ -329,185 +521,28 @@ function ContentEditor({ content, onChange }) {
   }
 
   return (
-    <>
-      {/* Meta */}
-      <div className="admin-card">
-        <div className="admin-card-title">🔍 SEO / Meta</div>
-        <Field label="Page title" value={content.meta?.title} onChange={v => set('meta.title', v)} />
-        <Field label="Meta description" value={content.meta?.description}
-          onChange={v => set('meta.description', v)} rows={2} />
-        <Field label="Keywords (comma-separated)" value={content.meta?.keywords}
-          onChange={v => set('meta.keywords', v)} />
-        <Field label="OG title (leave empty to use page title)" value={content.meta?.ogTitle}
-          onChange={v => set('meta.ogTitle', v)} />
-        <Field label="OG description (leave empty to use meta description)" value={content.meta?.ogDescription}
-          onChange={v => set('meta.ogDescription', v)} rows={2} />
-      </div>
-
-      {/* Nav */}
-      <div className="admin-card">
-        <div className="admin-card-title">🧭 Navigation</div>
-        <Field label="CTA button text" value={content.nav?.cta} onChange={v => set('nav.cta', v)} />
-        {content.nav?.links?.map((link, i) => (
-          <div key={i}>
-            <ListItemHeader index={i} label="Link" onRemove={() => removeItem('nav.links', i)} />
-            <div className="admin-field-row">
-              <Field label="Label" value={link.label} onChange={v => setArr('nav.links', i, 'label', v)} />
-              <Field label="Href" value={link.href} onChange={v => setArr('nav.links', i, 'href', v)} />
-            </div>
+    <div className="admin-card">
+      <Field label="Tagline" value={content.footer?.tagline} onChange={v => set('footer.tagline', v)} />
+      <Field label="Copyright text" value={content.footer?.copyright} onChange={v => set('footer.copyright', v)} />
+      {content.footer?.columns?.map((col, ci) => (
+        <div key={ci}>
+          <ListItemHeader index={ci} label="Column" onRemove={() => removeItem('footer.columns', ci)} />
+          <Field label="Column title" value={col.title} onChange={v => setArr('footer.columns', ci, 'title', v)} />
+          <div style={{ marginTop: 8 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 8, color: 'var(--text-secondary)' }}>Links</label>
+            {col.links?.map((link, li) => (
+              <div key={li} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
+                <input type="text" value={link} onChange={e => setFooterLink(ci, li, e.target.value)}
+                  style={{ flex: 1, padding: '8px 12px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font)', fontSize: 14, color: 'var(--text)' }} />
+                <button className="btn btn-ghost admin-remove-btn" onClick={() => removeFooterLink(ci, li)} title="Remove">✕</button>
+              </div>
+            ))}
+            <AddItemButton label="Add link" onClick={() => addFooterLink(ci)} />
           </div>
-        ))}
-        <AddItemButton label="Add link" onClick={() => addItem('nav.links', { label: '', href: '#' })} />
-      </div>
-
-      {/* Hero */}
-      <div className="admin-card">
-        <div className="admin-card-title">🦸 Hero Section</div>
-        <Field label="Badge text" value={content.hero?.badge} onChange={v => set('hero.badge', v)} />
-        <div className="admin-field-row">
-          <Field label="Title (first line)" value={content.hero?.title} onChange={v => set('hero.title', v)} />
-          <Field label="Title accent word" value={content.hero?.titleAccent} onChange={v => set('hero.titleAccent', v)} />
         </div>
-        <Field label="Subtitle" value={content.hero?.subtitle} onChange={v => set('hero.subtitle', v)} rows={2} />
-        <div className="admin-field-row">
-          <Field label="Primary CTA button" value={content.hero?.cta} onChange={v => set('hero.cta', v)} />
-          <Field label="Secondary CTA button" value={content.hero?.ctaSecondary} onChange={v => set('hero.ctaSecondary', v)} />
-        </div>
-        <Field label="Trust line (below buttons)" value={content.hero?.trustLine} onChange={v => set('hero.trustLine', v)} />
-      </div>
-
-      {/* Features */}
-      <div className="admin-card">
-        <div className="admin-card-title">⭐ Features Section</div>
-        <Field label="Section title" value={content.features?.title} onChange={v => set('features.title', v)} />
-        <Field label="Section subtitle" value={content.features?.subtitle}
-          onChange={v => set('features.subtitle', v)} rows={2} />
-        {content.features?.items?.map((item, i) => (
-          <div key={i}>
-            <ListItemHeader index={i} label="Feature" onRemove={() => removeItem('features.items', i)} />
-            <div className="admin-field-row">
-              <Field label="Icon (emoji)" value={item.icon} onChange={v => setArr('features.items', i, 'icon', v)} />
-              <Field label="Title" value={item.title} onChange={v => setArr('features.items', i, 'title', v)} />
-            </div>
-            <Field label="Description" value={item.desc} onChange={v => setArr('features.items', i, 'desc', v)} rows={2} />
-          </div>
-        ))}
-        <AddItemButton label="Add feature" onClick={() => addItem('features.items', { icon: '✨', title: '', desc: '' })} />
-      </div>
-
-      {/* How It Works */}
-      <div className="admin-card">
-        <div className="admin-card-title">⚙️ How It Works</div>
-        <Field label="Section title" value={content.howItWorks?.title} onChange={v => set('howItWorks.title', v)} />
-        <Field label="Section subtitle" value={content.howItWorks?.subtitle} onChange={v => set('howItWorks.subtitle', v)} rows={2} />
-        {content.howItWorks?.steps?.map((step, i) => (
-          <div key={i}>
-            <ListItemHeader index={i} label="Step" onRemove={() => removeItem('howItWorks.steps', i)} />
-            <Field label="Title" value={step.title} onChange={v => setArr('howItWorks.steps', i, 'title', v)} />
-            <Field label="Description" value={step.desc} onChange={v => setArr('howItWorks.steps', i, 'desc', v)} rows={2} />
-          </div>
-        ))}
-        <AddItemButton label="Add step" onClick={() => addItem('howItWorks.steps', { number: String(content.howItWorks.steps.length + 1).padStart(2, '0'), title: '', desc: '' })} />
-      </div>
-
-      {/* Pricing */}
-      <div className="admin-card">
-        <div className="admin-card-title">💰 Pricing Section</div>
-        <Field label="Section title" value={content.pricing?.title} onChange={v => set('pricing.title', v)} />
-        <Field label="Section subtitle" value={content.pricing?.subtitle} onChange={v => set('pricing.subtitle', v)} />
-        <Field label="Popular badge text" value={content.pricing?.badge} onChange={v => set('pricing.badge', v)} />
-        {content.pricing?.plans?.map((plan, i) => (
-          <div key={i}>
-            <ListItemHeader index={i} label={`Plan: ${plan.name || ''}`} onRemove={() => removeItem('pricing.plans', i)} />
-            <div className="admin-field-row">
-              <Field label="Plan name" value={plan.name} onChange={v => setArr('pricing.plans', i, 'name', v)} />
-              <Field label="Price" value={plan.price} onChange={v => setArr('pricing.plans', i, 'price', v)} />
-            </div>
-            <div className="admin-field-row">
-              <Field label="Period (e.g. / month)" value={plan.period} onChange={v => setArr('pricing.plans', i, 'period', v)} />
-              <Field label="CTA button text" value={plan.cta} onChange={v => setArr('pricing.plans', i, 'cta', v)} />
-            </div>
-            <Field label="Short description" value={plan.desc} onChange={v => setArr('pricing.plans', i, 'desc', v)} />
-            <div className="admin-field">
-              <label>Highlighted (popular)</label>
-              <label className="admin-toggle" style={{ marginTop: 4 }}>
-                <input type="checkbox" checked={!!plan.highlighted} onChange={e => setArr('pricing.plans', i, 'highlighted', e.target.checked)} />
-                <span className="admin-toggle-slider" />
-              </label>
-            </div>
-            <div style={{ marginTop: 8 }}>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 8, color: 'var(--text-secondary)' }}>Feature checklist</label>
-              {plan.features?.map((feat, fi) => (
-                <div key={fi} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
-                  <input type="text" value={feat} onChange={e => setPlanFeature(i, fi, e.target.value)}
-                    style={{ flex: 1, padding: '8px 12px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font)', fontSize: 14, color: 'var(--text)' }} />
-                  <button className="btn btn-ghost admin-remove-btn" onClick={() => removePlanFeature(i, fi)} title="Remove">✕</button>
-                </div>
-              ))}
-              <AddItemButton label="Add feature" onClick={() => addPlanFeature(i)} />
-            </div>
-          </div>
-        ))}
-        <AddItemButton label="Add plan" onClick={() => addItem('pricing.plans', { name: '', price: '', period: '', desc: '', features: [], cta: '', highlighted: false })} />
-      </div>
-
-      {/* Testimonials */}
-      <div className="admin-card">
-        <div className="admin-card-title">💬 Testimonials</div>
-        <Field label="Section title" value={content.testimonials?.title} onChange={v => set('testimonials.title', v)} />
-        {content.testimonials?.items?.map((t, i) => (
-          <div key={i}>
-            <ListItemHeader index={i} label="Testimonial" onRemove={() => removeItem('testimonials.items', i)} />
-            <Field label="Quote" value={t.quote} onChange={v => setArr('testimonials.items', i, 'quote', v)} rows={2} />
-            <div className="admin-field-row">
-              <Field label="Name" value={t.author} onChange={v => setArr('testimonials.items', i, 'author', v)} />
-              <Field label="Role / Label" value={t.role} onChange={v => setArr('testimonials.items', i, 'role', v)} />
-            </div>
-            <Field label="Avatar initials (2 chars)" value={t.avatar} onChange={v => setArr('testimonials.items', i, 'avatar', v)} />
-          </div>
-        ))}
-        <AddItemButton label="Add testimonial" onClick={() => addItem('testimonials.items', { quote: '', author: '', role: '', avatar: '' })} />
-      </div>
-
-      {/* FAQ */}
-      <div className="admin-card">
-        <div className="admin-card-title">❓ FAQ</div>
-        <Field label="Section title" value={content.faq?.title} onChange={v => set('faq.title', v)} />
-        {content.faq?.items?.map((item, i) => (
-          <div key={i}>
-            <ListItemHeader index={i} label="Q&A" onRemove={() => removeItem('faq.items', i)} />
-            <Field label="Question" value={item.q} onChange={v => setArr('faq.items', i, 'q', v)} />
-            <Field label="Answer" value={item.a} onChange={v => setArr('faq.items', i, 'a', v)} rows={3} />
-          </div>
-        ))}
-        <AddItemButton label="Add Q&A" onClick={() => addItem('faq.items', { q: '', a: '' })} />
-      </div>
-
-      {/* Footer */}
-      <div className="admin-card">
-        <div className="admin-card-title">🦶 Footer</div>
-        <Field label="Tagline" value={content.footer?.tagline} onChange={v => set('footer.tagline', v)} />
-        <Field label="Copyright text" value={content.footer?.copyright} onChange={v => set('footer.copyright', v)} />
-        {content.footer?.columns?.map((col, ci) => (
-          <div key={ci}>
-            <ListItemHeader index={ci} label="Column" onRemove={() => removeItem('footer.columns', ci)} />
-            <Field label="Column title" value={col.title} onChange={v => setArr('footer.columns', ci, 'title', v)} />
-            <div style={{ marginTop: 8 }}>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 8, color: 'var(--text-secondary)' }}>Links</label>
-              {col.links?.map((link, li) => (
-                <div key={li} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
-                  <input type="text" value={link} onChange={e => setFooterLink(ci, li, e.target.value)}
-                    style={{ flex: 1, padding: '8px 12px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font)', fontSize: 14, color: 'var(--text)' }} />
-                  <button className="btn btn-ghost admin-remove-btn" onClick={() => removeFooterLink(ci, li)} title="Remove">✕</button>
-                </div>
-              ))}
-              <AddItemButton label="Add link" onClick={() => addFooterLink(ci)} />
-            </div>
-          </div>
-        ))}
-        <AddItemButton label="Add column" onClick={() => addItem('footer.columns', { title: '', links: [] })} />
-      </div>
-    </>
+      ))}
+      <AddItemButton label="Add column" onClick={() => addItem('footer.columns', { title: '', links: [] })} />
+    </div>
   )
 }
 
@@ -620,12 +655,60 @@ function ExportImportBar({ data, lang, onImport }) {
   )
 }
 
+// ─── Section wrapper with language toggle ────────────────────────────────────
+function SectionWithLang({ sectionId, contentEn, contentTr, onEnChange, onTrChange, EditorComponent }) {
+  const [lang, setLang] = useState('en')
+  const content = lang === 'en' ? contentEn : contentTr
+  const onChange = lang === 'en' ? onEnChange : onTrChange
+  if (!content) return null
+  return (
+    <>
+      <LangTabs lang={lang} onLangChange={setLang} />
+      <EditorComponent content={content} onChange={onChange} />
+    </>
+  )
+}
+
 // ─── Main Admin Page ───────────────────────────────────────────────────────────
 const NAV_SECTIONS = [
-  { id: 'settings', icon: '⚙️', label: 'Global Settings' },
-  { id: 'content-en', icon: '🇬🇧', label: 'Content (EN)' },
-  { id: 'content-tr', icon: '🇹🇷', label: 'Content (TR)' },
+  { id: 'settings', icon: '⚙️', label: 'Settings', group: 'general' },
+  { id: 'seo', icon: '🔍', label: 'SEO / Meta', group: 'content' },
+  { id: 'nav', icon: '🧭', label: 'Navigation', group: 'content' },
+  { id: 'hero', icon: '🦸', label: 'Hero', group: 'content' },
+  { id: 'features', icon: '⭐', label: 'Features', group: 'content' },
+  { id: 'howItWorks', icon: '⚙️', label: 'How It Works', group: 'content' },
+  { id: 'pricing', icon: '💰', label: 'Pricing', group: 'content' },
+  { id: 'testimonials', icon: '💬', label: 'Testimonials', group: 'content' },
+  { id: 'faq', icon: '❓', label: 'FAQ', group: 'content' },
+  { id: 'footer', icon: '🦶', label: 'Footer', group: 'content' },
+  { id: 'bulk', icon: '📦', label: 'Export / Import', group: 'tools' },
 ]
+
+const SECTION_EDITORS = {
+  seo: SeoEditor,
+  nav: NavEditor,
+  hero: HeroEditor,
+  features: FeaturesEditor,
+  howItWorks: HowItWorksEditor,
+  pricing: PricingEditor,
+  testimonials: TestimonialsEditor,
+  faq: FaqEditor,
+  footer: FooterEditor,
+}
+
+const SECTION_DESCRIPTIONS = {
+  settings: 'Manage your logo, favicon, brand colors, section ordering and contact info.',
+  seo: 'Edit page title, meta description, keywords and Open Graph tags.',
+  nav: 'Configure navigation links and CTA button text.',
+  hero: 'Edit the hero section — headline, subtitle, CTA buttons.',
+  features: 'Manage feature cards — icons, titles, descriptions.',
+  howItWorks: 'Edit the "How It Works" steps.',
+  pricing: 'Configure pricing plans, features and badges.',
+  testimonials: 'Manage customer testimonials and quotes.',
+  faq: 'Edit frequently asked questions and answers.',
+  footer: 'Configure footer columns, links and copyright text.',
+  bulk: 'Export all content as JSON, edit externally, then import back.',
+}
 
 export default function Admin() {
   const { theme, toggleTheme } = useSite()
@@ -717,9 +800,24 @@ export default function Admin() {
 
   if (!authed) return <AdminLogin onLogin={handleLogin} />
 
-  const currentData = activeSection === 'settings' ? settingsData
-    : activeSection === 'content-en' ? contentEn : contentTr
-  const isReady = !!currentData
+  const isReady = !!(settingsData && contentEn && contentTr)
+  const currentNav = NAV_SECTIONS.find(s => s.id === activeSection)
+  const EditorComp = SECTION_EDITORS[activeSection]
+
+  const renderNavGroup = (group, title) => {
+    const items = NAV_SECTIONS.filter(s => s.group === group)
+    return (
+      <>
+        <div className="admin-nav-group-title">{title}</div>
+        {items.map(s => (
+          <button key={s.id} className={`admin-nav-item ${activeSection === s.id ? 'active' : ''}`}
+            onClick={() => setActiveSection(s.id)}>
+            <span>{s.icon}</span> {s.label}
+          </button>
+        ))}
+      </>
+    )
+  }
 
   return (
     <div className="admin-page">
@@ -753,15 +851,10 @@ export default function Admin() {
 
       <div className="admin-body">
         <aside className="admin-sidebar">
-          {NAV_SECTIONS.map(s => (
-            <button key={s.id} className={`admin-nav-item ${activeSection === s.id ? 'active' : ''}`}
-              onClick={() => setActiveSection(s.id)}>
-              <span>{s.icon}</span> {s.label}
-            </button>
-          ))}
+          {renderNavGroup('general', 'General')}
+          {renderNavGroup('content', 'Content Sections')}
+          {renderNavGroup('tools', 'Tools')}
           <div style={{ borderTop: '1px solid var(--border)', margin: '16px 0', paddingTop: 16 }}>
-            <div style={{ padding: '0 20px 8px', fontSize: 11, fontWeight: 800, textTransform: 'uppercase',
-              letterSpacing: '0.1em', color: 'var(--text-muted)' }}>Deploy</div>
             <div style={{ padding: '8px 20px', fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5, fontWeight: 600 }}>
               Changes are saved directly and go live instantly.
             </div>
@@ -771,13 +864,10 @@ export default function Admin() {
         <div style={{ flex: 1, overflow: 'auto' }}>
           <div className="admin-content">
             <div className="admin-section-title">
-              {NAV_SECTIONS.find(s => s.id === activeSection)?.icon}{' '}
-              {NAV_SECTIONS.find(s => s.id === activeSection)?.label}
+              {currentNav?.icon} {currentNav?.label}
             </div>
             <div className="admin-section-desc">
-              {activeSection === 'settings' && 'Manage your logo, favicon, brand colors, section ordering and contact info.'}
-              {activeSection === 'content-en' && 'Edit all English text — hero, features, pricing, FAQ, footer and more.'}
-              {activeSection === 'content-tr' && 'Edit all Turkish text — hero, features, pricing, FAQ, footer and more.'}
+              {SECTION_DESCRIPTIONS[activeSection] || ''}
             </div>
 
             {!isReady && (
@@ -787,16 +877,24 @@ export default function Admin() {
             {isReady && activeSection === 'settings' && (
               <SettingsEditor settings={settingsData} onChange={handleSettingsChange} />
             )}
-            {isReady && activeSection === 'content-en' && (
-              <>
-                <ExportImportBar data={contentEn} lang="en" onImport={handleEnChange} />
-                <ContentEditor content={contentEn} onChange={handleEnChange} />
-              </>
+
+            {isReady && EditorComp && (
+              <SectionWithLang
+                sectionId={activeSection}
+                contentEn={contentEn}
+                contentTr={contentTr}
+                onEnChange={handleEnChange}
+                onTrChange={handleTrChange}
+                EditorComponent={EditorComp}
+              />
             )}
-            {isReady && activeSection === 'content-tr' && (
+
+            {isReady && activeSection === 'bulk' && (
               <>
+                <div style={{ marginBottom: 8, fontWeight: 700, fontSize: 14 }}>🇬🇧 English Content</div>
+                <ExportImportBar data={contentEn} lang="en" onImport={handleEnChange} />
+                <div style={{ marginBottom: 8, fontWeight: 700, fontSize: 14 }}>🇹🇷 Turkish Content</div>
                 <ExportImportBar data={contentTr} lang="tr" onImport={handleTrChange} />
-                <ContentEditor content={contentTr} onChange={handleTrChange} />
               </>
             )}
           </div>
