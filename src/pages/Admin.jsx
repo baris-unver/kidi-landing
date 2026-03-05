@@ -214,6 +214,15 @@ function SettingsEditor({ settings, onChange }) {
       />
 
       <div className="admin-card">
+        <div className="admin-card-title">🖼️ Hero Image</div>
+        <ImageField label="Hero image (device mockup, child with tablet, etc.)"
+          value={settings.heroImage?.url}
+          onChange={v => set('heroImage.url', v)} previewSize={200} />
+        <Field label="Alt text (accessibility)" value={settings.heroImage?.alt}
+          onChange={v => set('heroImage.alt', v)} />
+      </div>
+
+      <div className="admin-card">
         <div className="admin-card-title">🎨 Logo</div>
         <Field label="Logo text (shown when no image)" value={settings.logo?.text}
           onChange={v => set('logo.text', v)} />
@@ -399,9 +408,11 @@ function HowItWorksEditor({ content, onChange }) {
           <ListItemHeader index={i} label="Step" onRemove={() => removeItem('howItWorks.steps', i)} />
           <Field label="Title" value={step.title} onChange={v => setArr('howItWorks.steps', i, 'title', v)} />
           <Field label="Description" value={step.desc} onChange={v => setArr('howItWorks.steps', i, 'desc', v)} rows={2} />
+          <ImageField label="Step image (optional, replaces number)" value={step.image}
+            onChange={v => setArr('howItWorks.steps', i, 'image', v)} previewSize={80} />
         </div>
       ))}
-      <AddItemButton label="Add step" onClick={() => addItem('howItWorks.steps', { number: String(content.howItWorks.steps.length + 1).padStart(2, '0'), title: '', desc: '' })} />
+      <AddItemButton label="Add step" onClick={() => addItem('howItWorks.steps', { number: String(content.howItWorks.steps.length + 1).padStart(2, '0'), title: '', desc: '', image: '' })} />
     </div>
   )
 }

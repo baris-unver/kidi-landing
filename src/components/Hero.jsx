@@ -2,10 +2,11 @@ import { useSite } from '../context/SiteContext'
 import useScrollReveal from '../hooks/useScrollReveal'
 
 export default function Hero() {
-  const { content } = useSite()
+  const { content, settings } = useSite()
   const sectionRef = useScrollReveal()
   if (!content) return null
   const { hero } = content
+  const heroImg = settings?.heroImage
 
   return (
     <section className="hero section" ref={sectionRef}>
@@ -15,7 +16,7 @@ export default function Hero() {
         <div className="blob blob-3" />
       </div>
 
-      <div className="container">
+      <div className={`container ${heroImg?.url ? 'hero-split' : ''}`}>
         <div className="hero-content">
           <div className="badge reveal">{hero.badge}</div>
 
@@ -45,29 +46,58 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="hero-floaters">
-          <div className="floater-card">
-            <span>🏆</span>
-            <div>
-              <div style={{ fontWeight: 900, fontSize: 16 }}>4.9 / 5</div>
-              <div style={{ fontSize: 12, opacity: 0.6, fontWeight: 600 }}>App Store</div>
+        {heroImg?.url ? (
+          <div className="hero-visual reveal">
+            <img src={heroImg.url} alt={heroImg.alt || ''} className="hero-visual-img" />
+            <div className="hero-floaters hero-floaters-over">
+              <div className="floater-card">
+                <span>🏆</span>
+                <div>
+                  <div style={{ fontWeight: 900, fontSize: 16 }}>4.9 / 5</div>
+                  <div style={{ fontSize: 12, opacity: 0.6, fontWeight: 600 }}>App Store</div>
+                </div>
+              </div>
+              <div className="floater-card">
+                <span>📈</span>
+                <div>
+                  <div style={{ fontWeight: 900, fontSize: 16 }}>+47%</div>
+                  <div style={{ fontSize: 12, opacity: 0.6, fontWeight: 600 }}>avg. score boost</div>
+                </div>
+              </div>
+              <div className="floater-card">
+                <span>⚡</span>
+                <div>
+                  <div style={{ fontWeight: 900, fontSize: 16 }}>12k+</div>
+                  <div style={{ fontSize: 12, opacity: 0.6, fontWeight: 600 }}>active learners</div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="floater-card">
-            <span>📈</span>
-            <div>
-              <div style={{ fontWeight: 900, fontSize: 16 }}>+47%</div>
-              <div style={{ fontSize: 12, opacity: 0.6, fontWeight: 600 }}>avg. score boost</div>
+        ) : (
+          <div className="hero-floaters">
+            <div className="floater-card">
+              <span>🏆</span>
+              <div>
+                <div style={{ fontWeight: 900, fontSize: 16 }}>4.9 / 5</div>
+                <div style={{ fontSize: 12, opacity: 0.6, fontWeight: 600 }}>App Store</div>
+              </div>
+            </div>
+            <div className="floater-card">
+              <span>📈</span>
+              <div>
+                <div style={{ fontWeight: 900, fontSize: 16 }}>+47%</div>
+                <div style={{ fontSize: 12, opacity: 0.6, fontWeight: 600 }}>avg. score boost</div>
+              </div>
+            </div>
+            <div className="floater-card">
+              <span>⚡</span>
+              <div>
+                <div style={{ fontWeight: 900, fontSize: 16 }}>12k+</div>
+                <div style={{ fontSize: 12, opacity: 0.6, fontWeight: 600 }}>active learners</div>
+              </div>
             </div>
           </div>
-          <div className="floater-card">
-            <span>⚡</span>
-            <div>
-              <div style={{ fontWeight: 900, fontSize: 16 }}>12k+</div>
-              <div style={{ fontSize: 12, opacity: 0.6, fontWeight: 600 }}>active learners</div>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </section>
   )

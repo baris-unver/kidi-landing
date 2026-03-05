@@ -67,17 +67,20 @@
       {
         "number": "01",
         "title": "Create your child's profile",
-        "desc": "Tell us your child's age, interests, and current level. Our AI builds a personalized curriculum on the spot."
+        "desc": "Tell us your child's age, interests, and current level. Our AI builds a personalized curriculum on the spot.",
+        "image": ""
       },
       {
         "number": "02",
         "title": "Start the first lesson",
-        "desc": "Your child dives into an interactive adventure. The AI watches, adapts, and keeps things perfectly challenging."
+        "desc": "Your child dives into an interactive adventure. The AI watches, adapts, and keeps things perfectly challenging.",
+        "image": ""
       },
       {
         "number": "03",
         "title": "Watch them grow",
-        "desc": "Get weekly progress reports. See skills develop. Celebrate milestones together as a family."
+        "desc": "Get weekly progress reports. See skills develop. Celebrate milestones together as a family.",
+        "image": ""
       }
     ]
   },

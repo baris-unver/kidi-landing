@@ -31,6 +31,10 @@
   "contact": {
     "email": "hello@kidi.ai"
   },
+  "heroImage": {
+    "url": "",
+    "alt": ""
+  },
   "sections": [
     {
       "id": "hero",

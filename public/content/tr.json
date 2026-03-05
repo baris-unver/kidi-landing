@@ -67,17 +67,20 @@
       {
         "number": "01",
         "title": "Çocuğunuzun profilini oluşturun",
-        "desc": "Çocuğunuzun yaşını, ilgi alanlarını ve mevcut seviyesini bize söyleyin. Yapay zekamız anında kişiselleştirilmiş bir müfredat oluşturur."
+        "desc": "Çocuğunuzun yaşını, ilgi alanlarını ve mevcut seviyesini bize söyleyin. Yapay zekamız anında kişiselleştirilmiş bir müfredat oluşturur.",
+        "image": ""
       },
       {
         "number": "02",
         "title": "İlk derse başlayın",
-        "desc": "Çocuğunuz interaktif bir maceraya dalar. Yapay zeka izler, uyum sağlar ve her şeyi mükemmel şekilde zorlu tutar."
+        "desc": "Çocuğunuz interaktif bir maceraya dalar. Yapay zeka izler, uyum sağlar ve her şeyi mükemmel şekilde zorlu tutar.",
+        "image": ""
       },
       {
         "number": "03",
         "title": "Gelişimini izleyin",
-        "desc": "Haftalık ilerleme raporları alın. Becerilerin geliştiğini görün. Dönüm noktalarını ailece kutlayın."
+        "desc": "Haftalık ilerleme raporları alın. Becerilerin geliştiğini görün. Dönüm noktalarını ailece kutlayın.",
+        "image": ""
       }
     ]
   },

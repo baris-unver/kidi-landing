@@ -43,7 +43,10 @@ export function HowItWorks() {
         <div className="steps-grid">
           {howItWorks.steps.map((step, i) => (
             <div className="step-card reveal" key={i} style={{ transitionDelay: `${i * 0.1}s` }}>
-              <div className="step-number">{step.number || String(i + 1).padStart(2, '0')}</div>
+              {step.image
+                ? <img className="step-image" src={step.image} alt={step.title} />
+                : <div className="step-number">{step.number || String(i + 1).padStart(2, '0')}</div>
+              }
               <div className="step-badge">{i + 1}</div>
               <h3>{step.title}</h3>
               <p>{step.desc}</p>
