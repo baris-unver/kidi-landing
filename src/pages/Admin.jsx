@@ -656,15 +656,16 @@ function ExportImportBar({ data, lang, onImport }) {
 }
 
 // ─── Section wrapper with language toggle ────────────────────────────────────
-function SectionWithLang({ sectionId, contentEn, contentTr, onEnChange, onTrChange, EditorComponent }) {
+function SectionWithLang({ contentEn, contentTr, onEnChange, onTrChange, editor }) {
   const [lang, setLang] = useState('en')
   const content = lang === 'en' ? contentEn : contentTr
   const onChange = lang === 'en' ? onEnChange : onTrChange
+  const Editor = editor
   if (!content) return null
   return (
     <>
       <LangTabs lang={lang} onLangChange={setLang} />
-      <EditorComponent content={content} onChange={onChange} />
+      <Editor content={content} onChange={onChange} />
     </>
   )
 }
@@ -880,12 +881,11 @@ export default function Admin() {
 
             {isReady && EditorComp && (
               <SectionWithLang
-                sectionId={activeSection}
                 contentEn={contentEn}
                 contentTr={contentTr}
                 onEnChange={handleEnChange}
                 onTrChange={handleTrChange}
-                EditorComponent={EditorComp}
+                editor={EditorComp}
               />
             )}
 
