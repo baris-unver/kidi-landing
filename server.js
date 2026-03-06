@@ -167,6 +167,7 @@ app.post('/api/save', requireAuth, async (req, res) => {
     const distPath = path.join(DIST_DIR, 'content', fileName)
     await fs.writeFile(distPath, json, 'utf-8').catch(() => {})
 
+    cachedOgData = null
     res.json({ ok: true })
   } catch (e) {
     res.status(500).json({ error: e.message })
@@ -477,36 +478,56 @@ app.use(express.static(DIST_DIR, {
   },
 }))
 
-app.get('/{*splat}', async (req, res) => {
-  try {
-    let html = await fs.readFile(path.join(DIST_DIR, 'index.html'), 'utf-8')
+let cachedOgData = null
+let ogDataLastRead = 0
 
-    const readJson = async (file) => {
-      for (const dir of [DATA_DIR, path.join(DIST_DIR, 'content')]) {
-        try { return JSON.parse(await fs.readFile(path.join(dir, file), 'utf-8')) } catch { /* try next */ }
-      }
-      return {}
+async function getOgData() {
+  const now = Date.now()
+  if (cachedOgData && now - ogDataLastRead < 30000) return cachedOgData
+  const readJson = async (file) => {
+    for (const dir of [DATA_DIR, path.join(DIST_DIR, 'content')]) {
+      try { return JSON.parse(await fs.readFile(path.join(dir, file), 'utf-8')) } catch { /* try next */ }
     }
+    return {}
+  }
+  try {
     const [settings, en] = await Promise.all([readJson('settings.json'), readJson('en.json')])
     const meta = en.meta || {}
     const seo = settings.seo || {}
-    const title = meta.ogTitle || meta.title || 'kidi.ai'
-    const desc = meta.ogDescription || meta.description || ''
     const siteUrl = seo.siteUrl || 'https://kidi.ai'
     const baseUrl = siteUrl.replace(/\/+$/, '')
     let ogImage = seo.ogImage || '/og-image.png'
     if (ogImage.startsWith('/')) ogImage = baseUrl + ogImage
+    cachedOgData = {
+      title: meta.ogTitle || meta.title || 'kidi.ai',
+      desc: meta.ogDescription || meta.description || '',
+      siteUrl,
+      ogImage,
+    }
+    ogDataLastRead = now
+    console.log('[OG] Loaded meta — image:', cachedOgData.ogImage)
+  } catch (err) {
+    console.error('[OG] Failed to load meta:', err.message)
+    if (!cachedOgData) cachedOgData = { title: 'kidi.ai', desc: '', siteUrl: 'https://kidi.ai', ogImage: 'https://kidi.ai/og-image.png' }
+  }
+  return cachedOgData
+}
+
+app.get('/{*splat}', async (req, res) => {
+  try {
+    let html = await fs.readFile(path.join(DIST_DIR, 'index.html'), 'utf-8')
+    const og = await getOgData()
 
     const replacements = [
-      [/(<meta\s+property="og:title"\s+content=")([^"]*)(")/, `$1${esc(title)}$3`],
-      [/(<meta\s+property="og:description"\s+content=")([^"]*)(")/, `$1${esc(desc)}$3`],
-      [/(<meta\s+property="og:url"\s+content=")([^"]*)(")/, `$1${esc(siteUrl)}$3`],
-      [/(<meta\s+property="og:image"\s+content=")([^"]*)(")/, `$1${esc(ogImage)}$3`],
-      [/(<meta\s+name="twitter:title"\s+content=")([^"]*)(")/, `$1${esc(title)}$3`],
-      [/(<meta\s+name="twitter:description"\s+content=")([^"]*)(")/, `$1${esc(desc)}$3`],
-      [/(<meta\s+name="twitter:image"\s+content=")([^"]*)(")/, `$1${esc(ogImage)}$3`],
-      [/(<meta\s+name="description"\s+content=")([^"]*)(")/, `$1${esc(desc)}$3`],
-      [/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`],
+      [/(<meta\s+property="og:title"\s+content=")([^"]*)(")/, `$1${esc(og.title)}$3`],
+      [/(<meta\s+property="og:description"\s+content=")([^"]*)(")/, `$1${esc(og.desc)}$3`],
+      [/(<meta\s+property="og:url"\s+content=")([^"]*)(")/, `$1${esc(og.siteUrl)}$3`],
+      [/(<meta\s+property="og:image"\s+content=")([^"]*)(")/, `$1${esc(og.ogImage)}$3`],
+      [/(<meta\s+name="twitter:title"\s+content=")([^"]*)(")/, `$1${esc(og.title)}$3`],
+      [/(<meta\s+name="twitter:description"\s+content=")([^"]*)(")/, `$1${esc(og.desc)}$3`],
+      [/(<meta\s+name="twitter:image"\s+content=")([^"]*)(")/, `$1${esc(og.ogImage)}$3`],
+      [/(<meta\s+name="description"\s+content=")([^"]*)(")/, `$1${esc(og.desc)}$3`],
+      [/<title>[^<]*<\/title>/, `<title>${esc(og.title)}</title>`],
     ]
     for (const [re, replacement] of replacements) {
       html = html.replace(re, replacement)
@@ -514,7 +535,8 @@ app.get('/{*splat}', async (req, res) => {
     res.setHeader('Content-Type', 'text/html')
     res.setHeader('Cache-Control', 'no-cache')
     res.send(html)
-  } catch {
+  } catch (err) {
+    console.error('[OG] HTML injection failed:', err.message)
     res.sendFile(path.join(DIST_DIR, 'index.html'))
   }
 })

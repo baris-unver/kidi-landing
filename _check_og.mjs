@@ -1,0 +1,6 @@
+const resp = await fetch('https://kidi.ai')
+const html = await resp.text()
+const ogMatch = html.match(/property="og:image"\s+content="([^"]*)"/)
+const twMatch = html.match(/name="twitter:image"\s+content="([^"]*)"/)
+console.log('og:image:', ogMatch ? ogMatch[1] : 'NOT FOUND')
+console.log('twitter:image:', twMatch ? twMatch[1] : 'NOT FOUND')

@@ -1,0 +1,5 @@
+const resp = await fetch('https://kidi.ai')
+const html = await resp.text()
+const head = html.substring(0, html.indexOf('</head>'))
+const metas = [...head.matchAll(/<meta[^>]+>/g)].map(m => m[0])
+metas.filter(m => /og:|twitter:|description/.test(m)).forEach(m => console.log(m))
