@@ -479,14 +479,18 @@ app.use(express.static(DIST_DIR, {
 }))
 
 let cachedOgData = null
-let ogDataLastRead = 0
 
-async function getOgData() {
-  const now = Date.now()
-  if (cachedOgData && now - ogDataLastRead < 30000) return cachedOgData
+async function loadOgData() {
   const readJson = async (file) => {
-    for (const dir of [DATA_DIR, path.join(DIST_DIR, 'content')]) {
-      try { return JSON.parse(await fs.readFile(path.join(dir, file), 'utf-8')) } catch { /* try next */ }
+    const dataPath = path.join(DATA_DIR, file)
+    const distPath = path.join(DIST_DIR, 'content', file)
+    for (const p of [dataPath, distPath]) {
+      try {
+        const raw = await fs.readFile(p, 'utf-8')
+        return JSON.parse(raw)
+      } catch (err) {
+        console.log(`[OG] Could not read ${p}: ${err.message}`)
+      }
     }
     return {}
   }
@@ -504,8 +508,7 @@ async function getOgData() {
       siteUrl,
       ogImage,
     }
-    ogDataLastRead = now
-    console.log('[OG] Loaded meta — image:', cachedOgData.ogImage)
+    console.log('[OG] Loaded meta — image:', cachedOgData.ogImage, '| title:', cachedOgData.title)
   } catch (err) {
     console.error('[OG] Failed to load meta:', err.message)
     if (!cachedOgData) cachedOgData = { title: 'kidi.ai', desc: '', siteUrl: 'https://kidi.ai', ogImage: 'https://kidi.ai/og-image.png' }
@@ -513,10 +516,15 @@ async function getOgData() {
   return cachedOgData
 }
 
+app.get('/api/og-debug', async (_req, res) => {
+  await loadOgData()
+  res.json(cachedOgData)
+})
+
 app.get('/{*splat}', async (req, res) => {
   try {
     let html = await fs.readFile(path.join(DIST_DIR, 'index.html'), 'utf-8')
-    const og = await getOgData()
+    const og = await loadOgData()
 
     const replacements = [
       [/(<meta\s+property="og:title"\s+content=")([^"]*)(")/, `$1${esc(og.title)}$3`],
@@ -598,7 +606,9 @@ app.listen(PORT, async () => {
   await fs.mkdir(DATA_DIR, { recursive: true }).catch(() => {})
   await fs.mkdir(UPLOAD_DIR, { recursive: true }).catch(() => {})
   await fs.mkdir(BACKUP_DIR, { recursive: true }).catch(() => {})
+  await fs.mkdir(BACKUP_DIR, { recursive: true }).catch(() => {})
   await migrateSettingsFile()
   await mergeDefaults()
+  await loadOgData()
   console.log(`Server running on port ${PORT}`)
 })
