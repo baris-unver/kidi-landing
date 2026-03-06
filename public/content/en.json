@@ -60,6 +60,16 @@
       }
     ]
   },
+  "parentApp": {
+    "title": "Stay Connected with Your Child's Journey",
+    "subtitle": "The parent app gives you full visibility into your child's learning — progress, achievements, and insights — all in the palm of your hand.",
+    "features": [
+      { "icon": "📊", "text": "Track learning progress in real-time" },
+      { "icon": "⏰", "text": "Set screen time limits" },
+      { "icon": "🔔", "text": "Get activity notifications" },
+      { "icon": "🎯", "text": "View achievement milestones" }
+    ]
+  },
   "howItWorks": {
     "title": "From zero to learning in minutes",
     "subtitle": "Three simple steps to unlock your child's potential.",

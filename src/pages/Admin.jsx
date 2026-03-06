@@ -149,6 +149,7 @@ const DEFAULT_SECTIONS = [
 const SECTION_LABELS = {
   hero: 'Hero',
   features: 'Features',
+  parentApp: 'Parent App',
   howItWorks: 'How It Works',
   pricing: 'Pricing',
   testimonials: 'Testimonials',
@@ -571,6 +572,94 @@ function FaqEditor({ content, onChange }) {
       ))}
       <AddItemButton label="Add Q&A" onClick={() => addItem('faq.items', { q: '', a: '' })} />
     </div>
+  )
+}
+
+function ParentAppEditor({ content, onChange }) {
+  const { set, setArr, addItem, removeItem } = useContentHelpers(content, onChange)
+  return (
+    <div className="admin-card">
+      <Field label="Section title" value={content.parentApp?.title} onChange={v => set('parentApp.title', v)} />
+      <Field label="Subtitle" value={content.parentApp?.subtitle}
+        onChange={v => set('parentApp.subtitle', v)} rows={2} />
+      {content.parentApp?.features?.map((f, i) => (
+        <div key={i}>
+          <ListItemHeader index={i} label="Feature" onRemove={() => removeItem('parentApp.features', i)} />
+          <div className="admin-field-row">
+            <Field label="Icon (emoji)" value={f.icon} onChange={v => setArr('parentApp.features', i, 'icon', v)} />
+            <Field label="Text" value={f.text} onChange={v => setArr('parentApp.features', i, 'text', v)} />
+          </div>
+        </div>
+      ))}
+      <AddItemButton label="Add feature" onClick={() => addItem('parentApp.features', { icon: '✨', text: '' })} />
+    </div>
+  )
+}
+
+function ParentAppSettingsCard({ settings, onChange }) {
+  const pa = settings.parentApp || {}
+
+  const set = (key, val) => {
+    const next = structuredClone(settings)
+    if (!next.parentApp) next.parentApp = {}
+    next.parentApp[key] = val
+    onChange(next)
+  }
+
+  const setScreenshot = (idx, field, val) => {
+    const next = structuredClone(settings)
+    if (!next.parentApp) next.parentApp = {}
+    if (!next.parentApp.screenshots) next.parentApp.screenshots = []
+    next.parentApp.screenshots[idx][field] = val
+    onChange(next)
+  }
+
+  const addScreenshot = () => {
+    const next = structuredClone(settings)
+    if (!next.parentApp) next.parentApp = {}
+    if (!next.parentApp.screenshots) next.parentApp.screenshots = []
+    next.parentApp.screenshots.push({ url: '', alt: '' })
+    onChange(next)
+  }
+
+  const removeScreenshot = (idx) => {
+    const next = structuredClone(settings)
+    next.parentApp.screenshots.splice(idx, 1)
+    onChange(next)
+  }
+
+  return (
+    <>
+      <div className="admin-card">
+        <div className="admin-card-title">Phone Screenshots</div>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 12px' }}>
+          Screenshots shown inside the phone mockup. First image is active by default; visitors click thumbnails to switch.
+        </p>
+        {(pa.screenshots || []).map((s, i) => (
+          <div key={i} style={{ padding: '12px', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', marginBottom: 10, background: 'var(--bg)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <span style={{ fontSize: 13, fontWeight: 600 }}>Screenshot {i + 1}</span>
+              <button className="btn btn-ghost admin-remove-btn" onClick={() => removeScreenshot(i)} title="Remove">✕</button>
+            </div>
+            <ImageField label="Image" value={s.url} onChange={v => setScreenshot(i, 'url', v)} previewSize={80} />
+            <Field label="Alt text" value={s.alt} onChange={v => setScreenshot(i, 'alt', v)} />
+          </div>
+        ))}
+        <button className="btn btn-ghost" style={{ fontSize: 13 }} onClick={addScreenshot}>+ Add screenshot</button>
+      </div>
+
+      <div className="admin-card">
+        <div className="admin-card-title">App Store Links</div>
+        <Field label="App Store URL" value={pa.appStoreUrl || ''} onChange={v => set('appStoreUrl', v)}
+          placeholder="https://apps.apple.com/..." />
+        <ImageField label="App Store badge image" value={pa.appStoreBadge || ''}
+          onChange={v => set('appStoreBadge', v)} previewSize={60} />
+        <Field label="Google Play URL" value={pa.playStoreUrl || ''} onChange={v => set('playStoreUrl', v)}
+          placeholder="https://play.google.com/store/apps/..." />
+        <ImageField label="Google Play badge image" value={pa.playStoreBadge || ''}
+          onChange={v => set('playStoreBadge', v)} previewSize={60} />
+      </div>
+    </>
   )
 }
 
@@ -1010,6 +1099,7 @@ const NAV_SECTIONS = [
   { id: 'nav', icon: '🧭', label: 'Navigation', group: 'content' },
   { id: 'hero', icon: '🦸', label: 'Hero', group: 'content' },
   { id: 'features', icon: '⭐', label: 'Features', group: 'content' },
+  { id: 'parentApp', icon: '📱', label: 'Parent App', group: 'content' },
   { id: 'howItWorks', icon: '⚙️', label: 'How It Works', group: 'content' },
   { id: 'pricing', icon: '💰', label: 'Pricing', group: 'content' },
   { id: 'testimonials', icon: '💬', label: 'Testimonials', group: 'content' },
@@ -1024,6 +1114,7 @@ const SECTION_EDITORS = {
   nav: NavEditor,
   hero: HeroEditor,
   features: FeaturesEditor,
+  parentApp: ParentAppEditor,
   howItWorks: HowItWorksEditor,
   pricing: PricingEditor,
   testimonials: TestimonialsEditor,
@@ -1038,6 +1129,7 @@ const SECTION_DESCRIPTIONS = {
   nav: 'Configure navigation links and CTA button text.',
   hero: 'Edit the hero section — headline, subtitle, CTA buttons.',
   features: 'Manage feature cards — icons, titles, descriptions.',
+  parentApp: 'Showcase the parent mobile app — screenshots, features, and app store links.',
   howItWorks: 'Edit the "How It Works" steps.',
   pricing: 'Configure pricing plans, features and badges.',
   testimonials: 'Manage customer testimonials and quotes.',
@@ -1227,6 +1319,10 @@ export default function Admin() {
                 onTrChange={handleTrChange}
                 editor={EditorComp}
               />
+            )}
+
+            {isReady && activeSection === 'parentApp' && (
+              <ParentAppSettingsCard settings={settingsData} onChange={handleSettingsChange} />
             )}
 
             {isReady && activeSection === 'bulk' && (

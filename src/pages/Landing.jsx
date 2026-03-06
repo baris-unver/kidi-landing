@@ -1,12 +1,13 @@
 import Nav from '../components/Nav'
 import Hero from '../components/Hero'
-import { Features, HowItWorks, Pricing, Testimonials, FAQ, Footer } from '../components/Sections'
+import { Features, ParentApp, HowItWorks, Pricing, Testimonials, FAQ, Footer } from '../components/Sections'
 import WhatsAppButton from '../components/WhatsAppButton'
 import { useSite } from '../context/SiteContext'
 
 const SECTION_COMPONENTS = {
   hero: Hero,
   features: Features,
+  parentApp: ParentApp,
   howItWorks: HowItWorks,
   pricing: Pricing,
   testimonials: Testimonials,
@@ -16,6 +17,7 @@ const SECTION_COMPONENTS = {
 const DEFAULT_SECTIONS = [
   { id: 'hero', visible: true },
   { id: 'features', visible: true },
+  { id: 'parentApp', visible: true },
   { id: 'howItWorks', visible: true },
   { id: 'pricing', visible: true },
   { id: 'testimonials', visible: true },

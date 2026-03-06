@@ -60,6 +60,16 @@
       }
     ]
   },
+  "parentApp": {
+    "title": "Çocuğunuzun Yolculuğuyla Bağlantıda Kalın",
+    "subtitle": "Ebeveyn uygulaması, çocuğunuzun öğrenme sürecini — ilerleme, başarılar ve içgörüler — avucunuzun içinde takip etmenizi sağlar.",
+    "features": [
+      { "icon": "📊", "text": "Öğrenme ilerlemesini anlık takip edin" },
+      { "icon": "⏰", "text": "Ekran süresi limitleri belirleyin" },
+      { "icon": "🔔", "text": "Aktivite bildirimleri alın" },
+      { "icon": "🎯", "text": "Başarı kilometre taşlarını görüntüleyin" }
+    ]
+  },
   "howItWorks": {
     "title": "Dakikalar içinde sıfırdan öğrenmeye",
     "subtitle": "Çocuğunuzun potansiyelini açmak için üç basit adım.",

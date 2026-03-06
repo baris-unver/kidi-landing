@@ -54,6 +54,83 @@ export function Features() {
   )
 }
 
+export function ParentApp() {
+  const { content, settings } = useSite()
+  const ref = useScrollReveal()
+  const [activeIdx, setActiveIdx] = useState(0)
+  if (!content) return null
+  const pa = content.parentApp
+  if (!pa) return null
+  const screenshots = (settings?.parentApp?.screenshots || []).filter(s => s.url)
+  const storeLinks = settings?.parentApp || {}
+
+  return (
+    <section className="section parent-app-section" id="parent-app" ref={ref}>
+      <div className="container">
+        <div className="parent-app-grid reveal">
+          <div className="parent-app-phone-col">
+            <div className="phone-mockup">
+              <div className="phone-notch" />
+              {screenshots.length > 0 ? (
+                <img className="phone-screen" src={screenshots[activeIdx]?.url || screenshots[0]?.url} alt={screenshots[activeIdx]?.alt || ''} />
+              ) : (
+                <div className="phone-screen phone-screen-placeholder">
+                  <span>📱</span>
+                </div>
+              )}
+            </div>
+            {screenshots.length > 1 && (
+              <div className="phone-thumbs">
+                {screenshots.map((s, i) => (
+                  <button key={i}
+                    className={`phone-thumb${i === activeIdx ? ' active' : ''}`}
+                    onClick={() => setActiveIdx(i)}>
+                    <img src={s.url} alt={s.alt || ''} />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="parent-app-content">
+            <h2>{pa.title}</h2>
+            {pa.subtitle && <p className="parent-app-subtitle">{pa.subtitle}</p>}
+            {pa.features?.length > 0 && (
+              <ul className="parent-app-features">
+                {pa.features.map((f, i) => (
+                  <li key={i}>
+                    <span className="parent-app-feature-icon">{f.icon}</span>
+                    <span>{f.text}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {(storeLinks.appStoreUrl || storeLinks.playStoreUrl) && (
+              <div className="store-badges">
+                {storeLinks.appStoreUrl && (
+                  <a href={storeLinks.appStoreUrl} target="_blank" rel="noopener noreferrer">
+                    {storeLinks.appStoreBadge
+                      ? <img src={storeLinks.appStoreBadge} alt="Download on the App Store" className="store-badge-img" />
+                      : <span className="store-badge-text">App Store</span>
+                    }
+                  </a>
+                )}
+                {storeLinks.playStoreUrl && (
+                  <a href={storeLinks.playStoreUrl} target="_blank" rel="noopener noreferrer">
+                    {storeLinks.playStoreBadge
+                      ? <img src={storeLinks.playStoreBadge} alt="Get it on Google Play" className="store-badge-img" />
+                      : <span className="store-badge-text">Google Play</span>
+                    }
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export function HowItWorks() {
   const { content } = useSite()
   const ref = useScrollReveal()

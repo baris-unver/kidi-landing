@@ -52,6 +52,10 @@
       "visible": true
     },
     {
+      "id": "parentApp",
+      "visible": true
+    },
+    {
       "id": "howItWorks",
       "visible": true
     },
@@ -77,5 +81,12 @@
     "prefillMessage": "Hi, I have a question about kidi.ai",
     "icon": "message",
     "position": "right"
+  },
+  "parentApp": {
+    "screenshots": [],
+    "appStoreUrl": "",
+    "playStoreUrl": "",
+    "appStoreBadge": "",
+    "playStoreBadge": ""
   }
 }
