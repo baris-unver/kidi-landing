@@ -48,8 +48,7 @@ export default function Hero() {
 
         {(() => {
           const cards = (hero.floaterCards || []).filter(c => c.visible !== false)
-          if (!cards.length) return null
-          const floaters = cards.map((card, i) => (
+          const floaters = cards.length > 0 ? cards.map((card, i) => (
             <div className="floater-card" key={i}>
               <span>{card.emoji}</span>
               <div>
@@ -57,15 +56,17 @@ export default function Hero() {
                 <div style={{ fontSize: 12, opacity: 0.6, fontWeight: 600 }}>{card.label}</div>
               </div>
             </div>
-          ))
-          return heroImg?.url ? (
-            <div className="hero-visual reveal">
-              <img src={heroImg.url} alt={heroImg.alt || ''} className="hero-visual-img" />
-              <div className="hero-floaters hero-floaters-over">{floaters}</div>
-            </div>
-          ) : (
-            <div className="hero-floaters">{floaters}</div>
-          )
+          )) : null
+
+          if (heroImg?.url) {
+            return (
+              <div className="hero-visual reveal">
+                <img src={heroImg.url} alt={heroImg.alt || ''} className="hero-visual-img" />
+                {floaters && <div className="hero-floaters hero-floaters-over">{floaters}</div>}
+              </div>
+            )
+          }
+          return floaters ? <div className="hero-floaters">{floaters}</div> : null
         })()}
       </div>
     </section>
