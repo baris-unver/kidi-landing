@@ -140,6 +140,7 @@ function AddItemButton({ label, onClick }) {
 const DEFAULT_SECTIONS = [
   { id: 'hero', visible: true },
   { id: 'features', visible: true },
+  { id: 'parentApp', visible: true },
   { id: 'howItWorks', visible: true },
   { id: 'pricing', visible: true },
   { id: 'testimonials', visible: true },
