@@ -337,7 +337,10 @@ function useContentHelpers(content, onChange) {
     const parts = path.split('.')
     const next = structuredClone(content)
     let obj = next
-    parts.slice(0, -1).forEach(k => { obj = obj[k] })
+    parts.slice(0, -1).forEach(k => {
+      if (!obj[k]) obj[k] = {}
+      obj = obj[k]
+    })
     obj[parts[parts.length - 1]] = val
     onChange(next)
   }
@@ -346,7 +349,11 @@ function useContentHelpers(content, onChange) {
     const next = structuredClone(content)
     const parts = path.split('.')
     let obj = next
-    parts.forEach(k => { obj = obj[k] })
+    parts.forEach(k => {
+      if (!obj[k]) obj[k] = []
+      obj = obj[k]
+    })
+    if (!obj[idx]) obj[idx] = {}
     obj[idx][key] = val
     onChange(next)
   }
@@ -355,8 +362,13 @@ function useContentHelpers(content, onChange) {
     const next = structuredClone(content)
     const parts = path.split('.')
     let obj = next
-    parts.forEach(k => { obj = obj[k] })
-    obj.push(template)
+    parts.slice(0, -1).forEach(k => {
+      if (!obj[k]) obj[k] = {}
+      obj = obj[k]
+    })
+    const lastKey = parts[parts.length - 1]
+    if (!obj[lastKey]) obj[lastKey] = []
+    obj[lastKey].push(template)
     onChange(next)
   }
 
@@ -364,8 +376,13 @@ function useContentHelpers(content, onChange) {
     const next = structuredClone(content)
     const parts = path.split('.')
     let obj = next
-    parts.slice(0, -1).forEach(k => { obj = obj[k] })
-    obj[parts[parts.length - 1]].splice(idx, 1)
+    parts.slice(0, -1).forEach(k => {
+      if (!obj[k]) obj[k] = {}
+      obj = obj[k]
+    })
+    if (obj[parts[parts.length - 1]]) {
+      obj[parts[parts.length - 1]].splice(idx, 1)
+    }
     onChange(next)
   }
 
