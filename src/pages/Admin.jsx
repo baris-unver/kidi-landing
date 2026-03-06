@@ -817,6 +817,8 @@ const LegalKvkkEditor = LegalEditor({ contentKey: 'kvkk' })
 
 // ─── Admin Login ──────────────────────────────────────────────────────────────
 function AdminLogin({ onLogin }) {
+  const { settings } = useSite()
+  const logo = settings?.logo
   const [pw, setPw] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -838,7 +840,12 @@ function AdminLogin({ onLogin }) {
   return (
     <div className="admin-login">
       <div className="admin-login-card">
-        <div className="admin-login-logo">kidi.ai</div>
+        <div className="admin-login-logo">
+          {logo?.imageUrl
+            ? <img src={logo.imageUrl} alt={logo.text || 'kidi.ai'} style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
+            : (logo?.text || 'kidi.ai')
+          }
+        </div>
         <div className="admin-login-title">Admin Access</div>
         <div className="admin-login-sub">Enter your admin password to continue</div>
         {error && <div className="admin-login-error">{error}</div>}
@@ -1395,7 +1402,13 @@ export default function Admin() {
         <button className="admin-mobile-menu-btn" onClick={() => setMobileNavOpen(!mobileNavOpen)}>
           ☰
         </button>
-        <span className="admin-topbar-logo">kidi.ai admin</span>
+        <span className="admin-topbar-logo">
+          {settingsData?.logo?.imageUrl
+            ? <img src={settingsData.logo.imageUrl} alt={settingsData.logo.text || 'kidi.ai'} style={{ height: 28, width: 'auto', objectFit: 'contain' }} />
+            : (settingsData?.logo?.text || 'kidi.ai')
+          }
+          {' '}admin
+        </span>
         <a href="/" target="_blank" className="btn btn-ghost" style={{ padding: '7px 16px', fontSize: 13 }}>
           ↗ View site
         </a>

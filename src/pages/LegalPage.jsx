@@ -11,7 +11,8 @@ const PAGE_KEYS = {
 export default function LegalPage() {
   const location = useLocation()
   const pageKey = location.pathname.replace('/', '')
-  const { lang, toggleLang } = useSite()
+  const { lang, toggleLang, settings } = useSite()
+  const logo = settings?.logo
   const meta = PAGE_KEYS[pageKey]
 
   const [legalData, setLegalData] = useState(null)
@@ -49,7 +50,10 @@ export default function LegalPage() {
     <>
       <nav className="legal-nav">
         <Link to="/" className="legal-nav-logo">
-          <span><span className="kidi">kidi</span><span className="dot">.ai</span></span>
+          {logo?.imageUrl
+            ? <img src={logo.imageUrl} alt={logo.text || 'kidi.ai'} style={{ height: 32, width: 'auto', objectFit: 'contain' }} />
+            : <span>{logo?.text || 'kidi.ai'}</span>
+          }
         </Link>
         {isKvkk ? (
           <span className="legal-only-badge">Yalnızca Türkçe</span>
@@ -85,7 +89,12 @@ export default function LegalPage() {
       </main>
 
       <footer className="legal-page-footer">
-        <div className="legal-footer-logo"><span>kidi</span>.ai</div>
+        <div className="legal-footer-logo">
+          {logo?.imageUrl
+            ? <img src={logo.imageUrl} alt={logo.text || 'kidi.ai'} style={{ height: 28, width: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
+            : <span>{logo?.text || 'kidi.ai'}</span>
+          }
+        </div>
         <p>© {new Date().getFullYear()} APPFAB UYGULAMA FABRİKASI YAZILIM ANONİM ŞİRKETİ. {lang === 'tr' ? 'Tüm hakları saklıdır.' : 'All rights reserved.'}</p>
         <div className="legal-footer-links">
           <Link to="/terms">{lang === 'tr' ? 'Kullanım Koşulları' : 'Terms of Service'}</Link>

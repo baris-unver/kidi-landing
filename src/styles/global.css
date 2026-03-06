@@ -1339,6 +1339,9 @@ button { font-family: var(--font); cursor: pointer; border: none; }
   font-weight: 900;
   color: var(--primary);
   margin-right: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 .admin-mobile-menu-btn {
   display: none;
@@ -1760,6 +1763,9 @@ button { font-family: var(--font); cursor: pointer; border: none; }
   font-weight: 900;
   color: var(--primary);
   margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .admin-login-title {
   font-size: 20px;
