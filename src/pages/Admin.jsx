@@ -749,8 +749,8 @@ function LegalEditor({ contentKey }) {
   return function LegalEditorInner({ content, onChange }) {
     const { set } = useContentHelpers(content, onChange)
     const [preview, setPreview] = useState(false)
-    const page = content?.legal?.[contentKey] || {}
-    const prefix = `legal.${contentKey}`
+    const page = content?.[contentKey] || {}
+    const prefix = contentKey
 
     return (
       <div className="admin-card">
@@ -1252,19 +1252,23 @@ export default function Admin() {
   const [settingsData, setSettingsData] = useState(null)
   const [contentEn, setContentEn] = useState(null)
   const [contentTr, setContentTr] = useState(null)
+  const [legalEn, setLegalEn] = useState(null)
+  const [legalTr, setLegalTr] = useState(null)
   const [toast, setToast] = useState(null)
   const [dirty, setDirty] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
-  const [snapshot, setSnapshot] = useState({ settings: null, en: null, tr: null })
+  const [snapshot, setSnapshot] = useState({ settings: null, en: null, tr: null, legalEn: null, legalTr: null })
 
   useEffect(() => {
     if (!authed) return
     const load = async () => {
-      const [s, en, tr] = await Promise.all([
+      const [s, en, tr, legEn, legTr] = await Promise.all([
         fetch('/content/settings.json').then(r => r.json()),
         fetch('/content/en.json').then(r => r.json()),
         fetch('/content/tr.json').then(r => r.json()),
+        fetch('/content/legal-en.json').then(r => r.json()).catch(() => ({})),
+        fetch('/content/legal-tr.json').then(r => r.json()).catch(() => ({})),
       ])
       const defaultParentApp = {
         title: '', subtitle: '', features: []
@@ -1272,17 +1276,23 @@ export default function Admin() {
       if (!en.parentApp) en.parentApp = defaultParentApp
       if (!tr.parentApp) tr.parentApp = { ...defaultParentApp }
       const defaultLegalPage = { title: '', badge: '', effectiveDate: '', lastUpdated: '', body: '' }
-      if (!en.legal) en.legal = {}
-      if (!en.legal.terms) en.legal.terms = { ...defaultLegalPage }
-      if (!en.legal.privacy) en.legal.privacy = { ...defaultLegalPage }
-      if (!tr.legal) tr.legal = {}
-      if (!tr.legal.terms) tr.legal.terms = { ...defaultLegalPage }
-      if (!tr.legal.privacy) tr.legal.privacy = { ...defaultLegalPage }
-      if (!tr.legal.kvkk) tr.legal.kvkk = { ...defaultLegalPage }
+      if (!legEn.terms) legEn.terms = { ...defaultLegalPage }
+      if (!legEn.privacy) legEn.privacy = { ...defaultLegalPage }
+      if (!legTr.terms) legTr.terms = { ...defaultLegalPage }
+      if (!legTr.privacy) legTr.privacy = { ...defaultLegalPage }
+      if (!legTr.kvkk) legTr.kvkk = { ...defaultLegalPage }
       setSettingsData(s)
       setContentEn(en)
       setContentTr(tr)
-      setSnapshot({ settings: JSON.stringify(s), en: JSON.stringify(en), tr: JSON.stringify(tr) })
+      setLegalEn(legEn)
+      setLegalTr(legTr)
+      setSnapshot({
+        settings: JSON.stringify(s),
+        en: JSON.stringify(en),
+        tr: JSON.stringify(tr),
+        legalEn: JSON.stringify(legEn),
+        legalTr: JSON.stringify(legTr),
+      })
       setDirty(false)
     }
     load()
@@ -1308,6 +1318,8 @@ export default function Admin() {
   const handleSettingsChange = (v) => { setSettingsData(v); setDirty(true) }
   const handleEnChange = (v) => { setContentEn(v); setDirty(true) }
   const handleTrChange = (v) => { setContentTr(v); setDirty(true) }
+  const handleLegalEnChange = (v) => { setLegalEn(v); setDirty(true) }
+  const handleLegalTrChange = (v) => { setLegalTr(v); setDirty(true) }
 
   const handleSave = async () => {
     setToast({ msg: 'Saving...', type: 'saving' })
@@ -1322,6 +1334,12 @@ export default function Admin() {
       if (contentTr && JSON.stringify(contentTr) !== snapshot.tr) {
         tasks.push(apiSave('content/tr.json', contentTr))
       }
+      if (legalEn && JSON.stringify(legalEn) !== snapshot.legalEn) {
+        tasks.push(apiSave('content/legal-en.json', legalEn))
+      }
+      if (legalTr && JSON.stringify(legalTr) !== snapshot.legalTr) {
+        tasks.push(apiSave('content/legal-tr.json', legalTr))
+      }
 
       if (tasks.length === 0) {
         setToast({ msg: 'No changes to save', type: '' })
@@ -1333,6 +1351,8 @@ export default function Admin() {
         settings: JSON.stringify(settingsData),
         en: JSON.stringify(contentEn),
         tr: JSON.stringify(contentTr),
+        legalEn: JSON.stringify(legalEn),
+        legalTr: JSON.stringify(legalTr),
       })
       setDirty(false)
       setToast({ msg: '✓ Saved! Changes are live.', type: 'success' })
@@ -1348,7 +1368,7 @@ export default function Admin() {
 
   if (!authed) return <AdminLogin onLogin={handleLogin} />
 
-  const isReady = !!(settingsData && contentEn && contentTr)
+  const isReady = !!(settingsData && contentEn && contentTr && legalEn && legalTr)
   const currentNav = NAV_SECTIONS.find(s => s.id === activeSection)
   const EditorComp = SECTION_EDITORS[activeSection]
 
@@ -1431,7 +1451,7 @@ export default function Admin() {
               <WhatsAppEditor settings={settingsData} onChange={handleSettingsChange} />
             )}
 
-            {isReady && EditorComp && activeSection !== 'legalKvkk' && (
+            {isReady && EditorComp && !activeSection.startsWith('legal') && (
               <SectionWithLang
                 contentEn={contentEn}
                 contentTr={contentTr}
@@ -1441,12 +1461,22 @@ export default function Admin() {
               />
             )}
 
+            {isReady && (activeSection === 'legalTerms' || activeSection === 'legalPrivacy') && EditorComp && (
+              <SectionWithLang
+                contentEn={legalEn}
+                contentTr={legalTr}
+                onEnChange={handleLegalEnChange}
+                onTrChange={handleLegalTrChange}
+                editor={EditorComp}
+              />
+            )}
+
             {isReady && activeSection === 'legalKvkk' && (
               <>
                 <div style={{ marginBottom: 12, fontSize: 13, fontWeight: 700, color: 'var(--text-muted)' }}>
                   🇹🇷 Turkish only — KVKK is a Turkish regulation
                 </div>
-                <LegalKvkkEditor content={contentTr} onChange={handleTrChange} />
+                <LegalKvkkEditor content={legalTr} onChange={handleLegalTrChange} />
               </>
             )}
 
@@ -1460,6 +1490,10 @@ export default function Admin() {
                 <ExportImportBar data={contentEn} lang="en" onImport={handleEnChange} />
                 <div style={{ marginBottom: 8, fontWeight: 700, fontSize: 14 }}>🇹🇷 Turkish Content</div>
                 <ExportImportBar data={contentTr} lang="tr" onImport={handleTrChange} />
+                <div style={{ marginBottom: 8, fontWeight: 700, fontSize: 14 }}>🇬🇧 Legal (English)</div>
+                <ExportImportBar data={legalEn} lang="legal-en" onImport={handleLegalEnChange} />
+                <div style={{ marginBottom: 8, fontWeight: 700, fontSize: 14 }}>🇹🇷 Legal (Turkish)</div>
+                <ExportImportBar data={legalTr} lang="legal-tr" onImport={handleLegalTrChange} />
               </>
             )}
 

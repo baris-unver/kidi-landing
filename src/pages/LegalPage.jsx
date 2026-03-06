@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSite } from '../context/SiteContext'
 
@@ -10,8 +11,23 @@ const PAGE_KEYS = {
 export default function LegalPage() {
   const location = useLocation()
   const pageKey = location.pathname.replace('/', '')
-  const { content, lang, toggleLang, loading } = useSite()
+  const { lang, toggleLang } = useSite()
   const meta = PAGE_KEYS[pageKey]
+
+  const [legalData, setLegalData] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  const isKvkk = pageKey === 'kvkk'
+  const fetchLang = isKvkk ? 'tr' : lang
+
+  useEffect(() => {
+    setLoading(true)
+    fetch(`/content/legal-${fetchLang}.json`)
+      .then(r => r.json())
+      .then(data => setLegalData(data))
+      .catch(() => setLegalData(null))
+      .finally(() => setLoading(false))
+  }, [fetchLang])
 
   if (loading) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32 }}>
@@ -26,11 +42,7 @@ export default function LegalPage() {
     </div>
   )
 
-  const isKvkk = pageKey === 'kvkk'
-  const page = isKvkk
-    ? content?.legal?.kvkk
-    : content?.legal?.[pageKey]
-
+  const page = legalData?.[pageKey]
   const backLabel = lang === 'tr' ? '← Siteye dön' : '← Back to site'
 
   return (

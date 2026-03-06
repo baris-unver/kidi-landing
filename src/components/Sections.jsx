@@ -262,7 +262,7 @@ export function FAQ() {
 }
 
 export function Footer() {
-  const { content, settings } = useSite()
+  const { content, settings, lang } = useSite()
   if (!content) return null
   const { footer } = content
   const logo = settings?.logo
@@ -299,8 +299,8 @@ export function Footer() {
           </div>
         </div>
         <div className="footer-legal-links">
-          <Link to="/terms">{content.legal?.terms?.title || 'Terms of Service'}</Link>
-          <Link to="/privacy">{content.legal?.privacy?.title || 'Privacy Policy'}</Link>
+          <Link to="/terms">{lang === 'tr' ? 'Kullanım Koşulları' : 'Terms of Service'}</Link>
+          <Link to="/privacy">{lang === 'tr' ? 'Gizlilik Politikası' : 'Privacy Policy'}</Link>
           <Link to="/kvkk">KVKK</Link>
         </div>
         <div className="footer-bottom">

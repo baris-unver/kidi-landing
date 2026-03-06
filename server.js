@@ -145,7 +145,7 @@ app.post('/api/auth/logout', requireAuth, (req, res) => {
 
 // --- Save (with auto-backup) ---
 
-const ALLOWED_FILES = ['settings.json', 'en.json', 'tr.json']
+const ALLOWED_FILES = ['settings.json', 'en.json', 'tr.json', 'legal-en.json', 'legal-tr.json']
 
 app.post('/api/save', requireAuth, async (req, res) => {
   const { filePath, content } = req.body
@@ -508,6 +508,26 @@ async function mergeDefaults() {
         await fs.writeFile(dataPath, JSON.stringify(dataData, null, 2), 'utf-8')
         console.log(`Merged new keys into data/${fileName}`)
       }
+    } catch { /* skip */ }
+  }
+
+  // Migrate: move legal content from en.json/tr.json into separate legal files
+  for (const lang of ['en', 'tr']) {
+    const mainPath = path.join(DATA_DIR, `${lang}.json`)
+    const legalPath = path.join(DATA_DIR, `legal-${lang}.json`)
+    try {
+      const mainRaw = await fs.readFile(mainPath, 'utf-8')
+      const mainData = JSON.parse(mainRaw)
+      if (!mainData.legal) continue
+      let legalData = {}
+      try { legalData = JSON.parse(await fs.readFile(legalPath, 'utf-8')) } catch { /* new file */ }
+      for (const key of Object.keys(mainData.legal)) {
+        if (!(key in legalData)) legalData[key] = mainData.legal[key]
+      }
+      await fs.writeFile(legalPath, JSON.stringify(legalData, null, 2), 'utf-8')
+      delete mainData.legal
+      await fs.writeFile(mainPath, JSON.stringify(mainData, null, 2), 'utf-8')
+      console.log(`Migrated legal content from ${lang}.json to legal-${lang}.json`)
     } catch { /* skip */ }
   }
 }
