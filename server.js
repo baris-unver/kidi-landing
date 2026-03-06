@@ -493,8 +493,9 @@ app.get('/{*splat}', async (req, res) => {
     const title = meta.ogTitle || meta.title || 'kidi.ai'
     const desc = meta.ogDescription || meta.description || ''
     const siteUrl = seo.siteUrl || 'https://kidi.ai'
-    let ogImage = seo.ogImage || ''
-    if (ogImage && ogImage.startsWith('/')) ogImage = siteUrl.replace(/\/+$/, '') + ogImage
+    const baseUrl = siteUrl.replace(/\/+$/, '')
+    let ogImage = seo.ogImage || '/og-image.png'
+    if (ogImage.startsWith('/')) ogImage = baseUrl + ogImage
 
     const replacements = [
       [/(<meta\s+property="og:title"\s+content=")([^"]*)(")/, `$1${esc(title)}$3`],
@@ -509,11 +510,6 @@ app.get('/{*splat}', async (req, res) => {
     ]
     for (const [re, replacement] of replacements) {
       html = html.replace(re, replacement)
-    }
-    if (!ogImage) {
-      html = html.replace(/<meta\s+property="og:image"\s+content="[^"]*"\s*\/?>[\r\n]*/g, '')
-      html = html.replace(/<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/?>[\r\n]*/g, '')
-      html = html.replace(/<meta\s+name="twitter:card"\s+content="[^"]*"\s*\/?>/, '<meta name="twitter:card" content="summary" />')
     }
     res.setHeader('Content-Type', 'text/html')
     res.setHeader('Cache-Control', 'no-cache')
