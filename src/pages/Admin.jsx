@@ -842,6 +842,166 @@ function SectionWithLang({ contentEn, contentTr, onEnChange, onTrChange, editor 
   )
 }
 
+// ─── Backup / Restore Editor ─────────────────────────────────────────────────
+function BackupRestoreEditor() {
+  const [backups, setBackups] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState('')
+  const restoreFileRef = useRef()
+
+  const loadBackups = async () => {
+    try {
+      const res = await fetch('/api/backups', {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      })
+      const data = await res.json()
+      if (res.ok) setBackups(data.backups || [])
+    } catch { /* ignore */ }
+  }
+
+  useEffect(() => { loadBackups() }, [])
+
+  const handleDownload = async () => {
+    setLoading(true)
+    setStatus('Preparing backup...')
+    try {
+      const res = await fetch('/api/backup', {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      })
+      if (!res.ok) throw new Error('Download failed')
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      const disposition = res.headers.get('content-disposition') || ''
+      const match = disposition.match(/filename="?([^"]+)"?/)
+      a.download = match ? match[1] : 'kidi-backup.zip'
+      a.click()
+      URL.revokeObjectURL(url)
+      setStatus('Backup downloaded')
+    } catch (e) {
+      setStatus('Download failed: ' + e.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleRestoreFile = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    e.target.value = ''
+    if (!confirm('This will replace all current content and images with the backup. A snapshot of the current state will be saved first. Continue?')) return
+    setLoading(true)
+    setStatus('Restoring from backup...')
+    try {
+      const form = new FormData()
+      form.append('file', file)
+      const res = await fetch('/api/restore', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getToken()}` },
+        body: form,
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Restore failed')
+      setStatus(`Restored ${data.restored.content.length} content files, ${data.restored.uploads.length} uploads. Reload the page to see changes.`)
+      loadBackups()
+    } catch (e) {
+      setStatus('Restore failed: ' + e.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleRestoreSnapshot = async (timestamp) => {
+    if (!confirm('Restore this auto-backup? Current content will be backed up first.')) return
+    setLoading(true)
+    setStatus('Restoring snapshot...')
+    try {
+      const res = await fetch('/api/restore-snapshot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify({ timestamp }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Restore failed')
+      setStatus(`Restored ${data.restored.length} files. Reload the page to see changes.`)
+      loadBackups()
+    } catch (e) {
+      setStatus('Restore failed: ' + e.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const formatDate = (ts) => {
+    try {
+      const iso = ts.replace(/(\d{4})-(\d{2})-(\d{2})T(\d{2})-(\d{2})-(\d{2}).*/, '$1-$2-$3T$4:$5:$6')
+      return new Date(iso).toLocaleString()
+    } catch { return ts }
+  }
+
+  return (
+    <>
+      <div className="admin-card">
+        <div className="admin-card-title">Full Backup</div>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 12px' }}>
+          Download a .zip archive containing all content files (settings, translations) and uploaded images.
+        </p>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <button className="btn btn-primary" onClick={handleDownload} disabled={loading}
+            style={{ padding: '10px 20px', fontSize: 14 }}>
+            {loading ? 'Working...' : 'Download Backup'}
+          </button>
+          <button className="btn btn-ghost" onClick={() => restoreFileRef.current.click()} disabled={loading}
+            style={{ padding: '10px 20px', fontSize: 14 }}>
+            Restore from .zip
+          </button>
+          <input ref={restoreFileRef} type="file" accept=".zip" style={{ display: 'none' }} onChange={handleRestoreFile} />
+        </div>
+        {status && (
+          <div style={{ marginTop: 12, padding: '10px 14px', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)', fontSize: 13, color: 'var(--text-secondary)' }}>
+            {status}
+          </div>
+        )}
+      </div>
+
+      <div className="admin-card">
+        <div className="admin-card-title">Auto-Backup History</div>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 12px' }}>
+          A snapshot is saved automatically before every content save. The last {backups.length} snapshots are kept.
+        </p>
+        {backups.length === 0 ? (
+          <div style={{ fontSize: 13, color: 'var(--text-secondary)', fontStyle: 'italic' }}>No auto-backups yet.</div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {backups.map(b => (
+              <div key={b.timestamp} style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                padding: '8px 12px', background: 'var(--bg)', border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-sm)', fontSize: 13,
+              }}>
+                <div>
+                  <span style={{ fontWeight: 600 }}>{formatDate(b.timestamp)}</span>
+                  <span style={{ color: 'var(--text-secondary)', marginLeft: 8 }}>
+                    ({b.files.length} files)
+                  </span>
+                </div>
+                <button className="btn btn-ghost" style={{ padding: '4px 12px', fontSize: 12 }}
+                  onClick={() => handleRestoreSnapshot(b.timestamp)} disabled={loading}>
+                  Restore
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
+  )
+}
+
 // ─── Main Admin Page ───────────────────────────────────────────────────────────
 const NAV_SECTIONS = [
   { id: 'settings', icon: '⚙️', label: 'Settings', group: 'general' },
@@ -856,6 +1016,7 @@ const NAV_SECTIONS = [
   { id: 'faq', icon: '❓', label: 'FAQ', group: 'content' },
   { id: 'footer', icon: '🦶', label: 'Footer', group: 'content' },
   { id: 'bulk', icon: '📦', label: 'Export / Import', group: 'tools' },
+  { id: 'backup', icon: '💾', label: 'Backup / Restore', group: 'tools' },
 ]
 
 const SECTION_EDITORS = {
@@ -883,6 +1044,7 @@ const SECTION_DESCRIPTIONS = {
   faq: 'Edit frequently asked questions and answers.',
   footer: 'Configure footer columns, links and copyright text.',
   bulk: 'Export all content as JSON, edit externally, then import back.',
+  backup: 'Download a full backup (content + images) or restore from a previous one.',
 }
 
 export default function Admin() {
@@ -1074,6 +1236,10 @@ export default function Admin() {
                 <div style={{ marginBottom: 8, fontWeight: 700, fontSize: 14 }}>🇹🇷 Turkish Content</div>
                 <ExportImportBar data={contentTr} lang="tr" onImport={handleTrChange} />
               </>
+            )}
+
+            {isReady && activeSection === 'backup' && (
+              <BackupRestoreEditor />
             )}
           </div>
 

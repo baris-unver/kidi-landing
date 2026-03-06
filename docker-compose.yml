@@ -9,6 +9,7 @@ services:
     volumes:
       - content_data:/app/data/content
       - upload_data:/app/data/uploads
+      - backup_data:/app/data/backups
 
   nginx:
     image: nginx:alpine
@@ -26,3 +27,4 @@ services:
 volumes:
   content_data:
   upload_data:
+  backup_data:

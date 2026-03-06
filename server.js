@@ -3,6 +3,9 @@ import crypto from 'crypto'
 import fs from 'fs/promises'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import archiver from 'archiver'
+import unzipper from 'unzipper'
+import { Readable } from 'stream'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -12,7 +15,9 @@ const PORT = process.env.PORT || 3000
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin'
 const DATA_DIR = path.join(__dirname, 'data', 'content')
 const UPLOAD_DIR = path.join(__dirname, 'data', 'uploads')
+const BACKUP_DIR = path.join(__dirname, 'data', 'backups')
 const DIST_DIR = path.join(__dirname, 'dist')
+const MAX_AUTO_BACKUPS = 20
 
 const sessions = new Map()
 
@@ -80,6 +85,46 @@ async function migrateSettingsFile() {
   }
 }
 
+// --- Auto-backup helpers ---
+
+async function createAutoBackup() {
+  try {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+    const snapshotDir = path.join(BACKUP_DIR, timestamp)
+    await fs.mkdir(snapshotDir, { recursive: true })
+
+    for (const fileName of ALLOWED_FILES) {
+      const src = path.join(DATA_DIR, fileName)
+      try {
+        await fs.copyFile(src, path.join(snapshotDir, fileName))
+      } catch {
+        // file may not exist yet
+      }
+    }
+
+    await pruneOldBackups()
+    return timestamp
+  } catch (e) {
+    console.error('Auto-backup failed:', e.message)
+    return null
+  }
+}
+
+async function pruneOldBackups() {
+  try {
+    const entries = await fs.readdir(BACKUP_DIR, { withFileTypes: true })
+    const dirs = entries.filter(e => e.isDirectory()).map(e => e.name).sort()
+    if (dirs.length > MAX_AUTO_BACKUPS) {
+      const toDelete = dirs.slice(0, dirs.length - MAX_AUTO_BACKUPS)
+      for (const dir of toDelete) {
+        await fs.rm(path.join(BACKUP_DIR, dir), { recursive: true, force: true })
+      }
+    }
+  } catch {
+    // backup dir may not exist yet
+  }
+}
+
 // --- Auth ---
 
 app.post('/api/auth', (req, res) => {
@@ -98,7 +143,7 @@ app.post('/api/auth/logout', requireAuth, (req, res) => {
   res.json({ ok: true })
 })
 
-// --- Save ---
+// --- Save (with auto-backup) ---
 
 const ALLOWED_FILES = ['settings.json', 'en.json', 'tr.json']
 
@@ -111,6 +156,7 @@ app.post('/api/save', requireAuth, async (req, res) => {
   }
 
   try {
+    await createAutoBackup()
     await migrateBase64InObject(content)
     await fs.mkdir(DATA_DIR, { recursive: true })
 
@@ -225,6 +271,196 @@ function parseMultipart(buffer, boundary) {
   return parts
 }
 
+// --- Backup / Restore API ---
+
+app.get('/api/backup', requireAuth, async (req, res) => {
+  try {
+    const archive = archiver('zip', { zlib: { level: 6 } })
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+
+    res.setHeader('Content-Type', 'application/zip')
+    res.setHeader('Content-Disposition', `attachment; filename="kidi-backup-${timestamp}.zip"`)
+
+    archive.pipe(res)
+
+    for (const fileName of ALLOWED_FILES) {
+      const filePath = path.join(DATA_DIR, fileName)
+      try {
+        await fs.access(filePath)
+        archive.file(filePath, { name: `content/${fileName}` })
+      } catch {
+        // skip missing files
+      }
+    }
+
+    try {
+      const uploadFiles = await fs.readdir(UPLOAD_DIR)
+      for (const file of uploadFiles) {
+        const filePath = path.join(UPLOAD_DIR, file)
+        const stat = await fs.stat(filePath)
+        if (stat.isFile()) {
+          archive.file(filePath, { name: `uploads/${file}` })
+        }
+      }
+    } catch {
+      // uploads dir may not exist
+    }
+
+    await archive.finalize()
+  } catch (e) {
+    if (!res.headersSent) {
+      res.status(500).json({ error: e.message })
+    }
+  }
+})
+
+app.post('/api/restore', requireAuth, async (req, res) => {
+  try {
+    const contentType = req.headers['content-type'] || ''
+    if (!contentType.startsWith('multipart/form-data')) {
+      return res.status(400).json({ error: 'Expected multipart file upload' })
+    }
+
+    const chunks = []
+    let size = 0
+    const MAX_RESTORE = 100 * 1024 * 1024 // 100MB max for restore zip
+
+    await new Promise((resolve, reject) => {
+      req.on('data', chunk => {
+        size += chunk.length
+        if (size > MAX_RESTORE) {
+          reject(new Error('Backup file too large (max 100MB)'))
+          return
+        }
+        chunks.push(chunk)
+      })
+      req.on('end', resolve)
+      req.on('error', reject)
+    })
+
+    const raw = Buffer.concat(chunks)
+    const boundaryMatch = contentType.match(/boundary=(.+)/)
+    if (!boundaryMatch) {
+      return res.status(400).json({ error: 'Missing boundary' })
+    }
+
+    const parts = parseMultipart(raw, boundaryMatch[1])
+    const filePart = parts.find(p => p.filename?.endsWith('.zip'))
+
+    if (!filePart) {
+      return res.status(400).json({ error: 'No .zip file found in upload' })
+    }
+
+    await createAutoBackup()
+
+    const restored = { content: [], uploads: [] }
+    const stream = Readable.from(filePart.data)
+    const directory = stream.pipe(unzipper.Parse())
+
+    for await (const entry of directory) {
+      const entryPath = entry.path
+      const entryType = entry.type
+
+      if (entryType === 'Directory') {
+        entry.autodrain()
+        continue
+      }
+
+      if (entryPath.startsWith('content/')) {
+        const fileName = path.basename(entryPath)
+        if (ALLOWED_FILES.includes(fileName)) {
+          const entryData = await entry.buffer()
+          JSON.parse(entryData.toString('utf-8'))
+          await fs.mkdir(DATA_DIR, { recursive: true })
+          await fs.writeFile(path.join(DATA_DIR, fileName), entryData)
+          const distContentDir = path.join(DIST_DIR, 'content')
+          await fs.writeFile(path.join(distContentDir, fileName), entryData).catch(() => {})
+          restored.content.push(fileName)
+        } else {
+          entry.autodrain()
+        }
+      } else if (entryPath.startsWith('uploads/')) {
+        const fileName = path.basename(entryPath)
+        if (fileName && !fileName.startsWith('.')) {
+          await fs.mkdir(UPLOAD_DIR, { recursive: true })
+          const entryData = await entry.buffer()
+          await fs.writeFile(path.join(UPLOAD_DIR, fileName), entryData)
+          restored.uploads.push(fileName)
+        } else {
+          entry.autodrain()
+        }
+      } else {
+        entry.autodrain()
+      }
+    }
+
+    res.json({ ok: true, restored })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+app.get('/api/backups', requireAuth, async (_req, res) => {
+  try {
+    await fs.mkdir(BACKUP_DIR, { recursive: true })
+    const entries = await fs.readdir(BACKUP_DIR, { withFileTypes: true })
+    const snapshots = []
+
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue
+      const dirPath = path.join(BACKUP_DIR, entry.name)
+      const files = await fs.readdir(dirPath)
+      const stat = await fs.stat(dirPath)
+      snapshots.push({
+        timestamp: entry.name,
+        date: stat.mtime.toISOString(),
+        files,
+      })
+    }
+
+    snapshots.sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+    res.json({ backups: snapshots })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+app.post('/api/restore-snapshot', requireAuth, async (req, res) => {
+  const { timestamp } = req.body
+  if (!timestamp) {
+    return res.status(400).json({ error: 'Missing timestamp' })
+  }
+
+  const safeName = path.basename(timestamp)
+  const snapshotDir = path.join(BACKUP_DIR, safeName)
+
+  try {
+    await fs.access(snapshotDir)
+  } catch {
+    return res.status(404).json({ error: 'Snapshot not found' })
+  }
+
+  try {
+    await createAutoBackup()
+
+    const files = await fs.readdir(snapshotDir)
+    const restored = []
+
+    for (const file of files) {
+      if (!ALLOWED_FILES.includes(file)) continue
+      const data = await fs.readFile(path.join(snapshotDir, file))
+      await fs.writeFile(path.join(DATA_DIR, file), data)
+      const distPath = path.join(DIST_DIR, 'content', file)
+      await fs.writeFile(distPath, data).catch(() => {})
+      restored.push(file)
+    }
+
+    res.json({ ok: true, restored })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
 // --- Static files with caching ---
 
 app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '30d', immutable: true }))
@@ -254,6 +490,7 @@ app.use((err, _req, res, _next) => {
 app.listen(PORT, async () => {
   await fs.mkdir(DATA_DIR, { recursive: true }).catch(() => {})
   await fs.mkdir(UPLOAD_DIR, { recursive: true }).catch(() => {})
+  await fs.mkdir(BACKUP_DIR, { recursive: true }).catch(() => {})
   await migrateSettingsFile()
   console.log(`Server running on port ${PORT}`)
 })
