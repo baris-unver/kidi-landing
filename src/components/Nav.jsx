@@ -76,7 +76,8 @@ export default function Nav() {
               {theme === 'dark' ? '☀️' : '🌙'}
             </button>
 
-            <a href="#pricing" className="btn btn-primary nav-cta-btn" style={{ padding: '10px 20px', fontSize: '14px' }}>
+            <a href={nav.ctaLink || '#pricing'} className="btn btn-primary nav-cta-btn" style={{ padding: '10px 20px', fontSize: '14px' }}
+              {...(nav.ctaLink?.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
               {nav.cta}
             </a>
 
@@ -110,7 +111,8 @@ export default function Nav() {
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
         </div>
-        <a href="#pricing" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={closeMenu}>
+        <a href={nav.ctaLink || '#pricing'} className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={closeMenu}
+          {...(nav.ctaLink?.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
           {nav.cta}
         </a>
       </div>

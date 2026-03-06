@@ -445,7 +445,10 @@ function NavEditor({ content, onChange }) {
   const { set, setArr, addItem, removeItem } = useContentHelpers(content, onChange)
   return (
     <div className="admin-card">
-      <Field label="CTA button text" value={content.nav?.cta} onChange={v => set('nav.cta', v)} />
+      <div className="admin-field-row">
+        <Field label="CTA button text" value={content.nav?.cta} onChange={v => set('nav.cta', v)} />
+        <Field label="CTA button link" value={content.nav?.ctaLink} onChange={v => set('nav.ctaLink', v)} placeholder="#pricing" />
+      </div>
       {content.nav?.links?.map((link, i) => (
         <div key={i}>
           <ListItemHeader index={i} label="Link" onRemove={() => removeItem('nav.links', i)} />
