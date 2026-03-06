@@ -15,19 +15,27 @@ export default function LegalPage() {
   const logo = settings?.logo
   const meta = PAGE_KEYS[pageKey]
 
-  const [legalData, setLegalData] = useState(null)
-  const [loading, setLoading] = useState(true)
-
   const isKvkk = pageKey === 'kvkk'
   const fetchLang = isKvkk ? 'tr' : lang
 
-  useEffect(() => {
+  const [legalData, setLegalData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [fetchedLang, setFetchedLang] = useState(null)
+
+  if (fetchLang !== fetchedLang) {
+    setFetchedLang(fetchLang)
+    setLegalData(null)
     setLoading(true)
+  }
+
+  useEffect(() => {
+    let stale = false
     fetch(`/content/legal-${fetchLang}.json`)
       .then(r => r.json())
-      .then(data => setLegalData(data))
-      .catch(() => setLegalData(null))
-      .finally(() => setLoading(false))
+      .then(data => { if (!stale) setLegalData(data) })
+      .catch(() => { if (!stale) setLegalData(null) })
+      .finally(() => { if (!stale) setLoading(false) })
+    return () => { stale = true }
   }, [fetchLang])
 
   if (loading) return (
