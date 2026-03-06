@@ -487,10 +487,36 @@ app.use((err, _req, res, _next) => {
   res.status(err.status || 500).json({ error: err.message || 'Internal server error' })
 })
 
+async function mergeDefaults() {
+  for (const fileName of ALLOWED_FILES) {
+    const distPath = path.join(DIST_DIR, 'content', fileName)
+    const dataPath = path.join(DATA_DIR, fileName)
+    try {
+      const distRaw = await fs.readFile(distPath, 'utf-8')
+      const distData = JSON.parse(distRaw)
+      let dataRaw
+      try { dataRaw = await fs.readFile(dataPath, 'utf-8') } catch { continue }
+      const dataData = JSON.parse(dataRaw)
+      let changed = false
+      for (const key of Object.keys(distData)) {
+        if (!(key in dataData)) {
+          dataData[key] = distData[key]
+          changed = true
+        }
+      }
+      if (changed) {
+        await fs.writeFile(dataPath, JSON.stringify(dataData, null, 2), 'utf-8')
+        console.log(`Merged new keys into data/${fileName}`)
+      }
+    } catch { /* skip */ }
+  }
+}
+
 app.listen(PORT, async () => {
   await fs.mkdir(DATA_DIR, { recursive: true }).catch(() => {})
   await fs.mkdir(UPLOAD_DIR, { recursive: true }).catch(() => {})
   await fs.mkdir(BACKUP_DIR, { recursive: true }).catch(() => {})
   await migrateSettingsFile()
+  await mergeDefaults()
   console.log(`Server running on port ${PORT}`)
 })
