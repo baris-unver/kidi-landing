@@ -471,6 +471,7 @@ app.use('/content', express.static(DATA_DIR, { maxAge: '60000' }))
 app.use(express.static(DIST_DIR, {
   maxAge: '1y',
   immutable: true,
+  index: false,
   setHeaders(res, filePath) {
     if (filePath.endsWith('.html')) {
       res.setHeader('Cache-Control', 'no-cache')
@@ -516,10 +517,6 @@ async function loadOgData() {
   return cachedOgData
 }
 
-app.get('/api/og-debug', async (_req, res) => {
-  await loadOgData()
-  res.json(cachedOgData)
-})
 
 app.get('/{*splat}', async (req, res) => {
   try {
