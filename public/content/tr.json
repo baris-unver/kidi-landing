@@ -226,6 +226,19 @@
       }
     ]
   },
+  "about": {
+    "title": "kidi.ai Hakkında",
+    "subtitle": "Her çocuğun kendine uyum sağlayan bir öğrenme deneyimini hak ettiğine inanıyoruz — tam tersi değil.",
+    "body": "<h2>Misyonumuz</h2>\n<p>kidi.ai basit bir inançla kuruldu: öğrenme, oyun gibi hissettirmeli. Çocuk gelişimi araştırmalarını ileri yapay zeka ile birleştirerek her çocukla birlikte büyüyen bir öğrenme yoldaşı yaratıyoruz.</p>\n\n<h2>Biz Kimiz</h2>\n<p>Ankara, Türkiye merkezli tutkulu eğitimciler, mühendisler ve ebeveynlerden oluşan bir ekibiz. <strong>APPFAB UYGULAMA FABRİKASI YAZILIM ANONİM ŞİRKETİ</strong> bünyesindeki ekibimiz, kaliteli eğitimi her çocuk için erişilebilir ve keyifli hale getirmeye kendini adamıştır.</p>\n<div class=\"company-card\">\n<strong>APPFAB UYGULAMA FABRİKASI YAZILIM ANONİM ŞİRKETİ</strong>\nMustafa Kemal Mah. Dumlupınar Blv. B Blok No: 266 B İç Kapı No: 73<br/>\nÇankaya / Ankara, Türkiye<br/>\n<a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a>\n</div>\n\n<h2>Değerlerimiz</h2>\n<ul>\n<li><strong>Çocuk öncelikli tasarım</strong> — Her karar, çocuk için en iyi olanla başlar.</li>\n<li><strong>Varsayılan gizlilik</strong> — Yalnızca gerekli olanı topluyoruz, veri satmıyoruz ve reklam göstermiyoruz.</li>\n<li><strong>Bilim destekli</strong> — Müfredatımız dil edinimi araştırmalarına ve aralıklı tekrar yöntemine dayanır.</li>\n<li><strong>Kapsayıcı</strong> — Öğrenme, geçmişe veya yeteneğe bakılmaksızın erişilebilir olmalıdır.</li>\n</ul>"
+  },
+  "contact": {
+    "title": "İletişim",
+    "subtitle": "Bir sorunuz, iş birliği fikriniz mi var ya da sadece merhaba mı demek istiyorsunuz? Sizden haber almaktan mutluluk duyarız.",
+    "email": "hello@kidi.ai",
+    "address": "Mustafa Kemal Mah. Dumlupınar Blv. B Blok No: 266 B İç Kapı No: 73, Çankaya / Ankara, Türkiye",
+    "phone": "",
+    "body": "<h2>Destek</h2>\n<p>Hesabınız, cihazınız veya aboneliğiniz hakkında yardım için <a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a> adresine e-posta gönderin. İş günlerinde 24 saat içinde yanıt vermeyi hedefliyoruz.</p>\n\n<h2>Basın ve Medya</h2>\n<p>Basın soruları, röportajlar veya medya materyalleri için lütfen konu satırına \"Basın Sorusu\" yazarak <a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a> adresine ulaşın.</p>\n\n<h2>İş Birlikleri</h2>\n<p>kidi'yi okulunuza, kurumunuza veya dağıtım ağınıza getirmek mi istiyorsunuz? Birlikte nasıl çalışabileceğimizi keşfetmek isteriz. <a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a> adresinden bize ulaşın.</p>"
+  },
   "footer": {
     "tagline": "Her çocuğu meraklı, özgüvenli bir öğrenci yapmak.",
     "columns": [
@@ -255,7 +268,7 @@
         "links": [
           {
             "label": "Hakkımızda",
-            "href": "#"
+            "href": "#about"
           },
           {
             "label": "Blog",
@@ -280,7 +293,7 @@
           },
           {
             "label": "İletişim",
-            "href": "#"
+            "href": "#contact"
           },
           {
             "label": "Gizlilik Politikası",

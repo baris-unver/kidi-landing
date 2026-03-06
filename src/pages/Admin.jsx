@@ -774,6 +774,63 @@ function FooterEditor({ content, onChange }) {
   )
 }
 
+// ─── About Page Editor ────────────────────────────────────────────────────────
+function AboutEditor({ content, onChange }) {
+  const { set } = useContentHelpers(content, onChange)
+  const [preview, setPreview] = useState(false)
+  const about = content?.about || {}
+  return (
+    <div className="admin-card">
+      <Field label="Title" value={about.title || ''} onChange={v => set('about.title', v)} />
+      <Field label="Subtitle" value={about.subtitle || ''} onChange={v => set('about.subtitle', v)} rows={2} />
+      <div style={{ marginTop: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)' }}>HTML Body</label>
+          <button className="btn btn-ghost" style={{ fontSize: 12, padding: '4px 12px' }} onClick={() => setPreview(!preview)}>
+            {preview ? '✏️ Edit' : '👁️ Preview'}
+          </button>
+        </div>
+        {preview ? (
+          <div className="legal-content" style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: 24, maxHeight: 500, overflow: 'auto' }} dangerouslySetInnerHTML={{ __html: about.body || '' }} />
+        ) : (
+          <textarea value={about.body || ''} onChange={e => set('about.body', e.target.value)} rows={18} style={{ width: '100%', fontFamily: 'monospace', fontSize: 13, lineHeight: 1.5, background: 'var(--bg)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: 16, resize: 'vertical' }} />
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── Contact Page Editor ──────────────────────────────────────────────────────
+function ContactEditor({ content, onChange }) {
+  const { set } = useContentHelpers(content, onChange)
+  const [preview, setPreview] = useState(false)
+  const contact = content?.contact || {}
+  return (
+    <div className="admin-card">
+      <Field label="Title" value={contact.title || ''} onChange={v => set('contact.title', v)} />
+      <Field label="Subtitle" value={contact.subtitle || ''} onChange={v => set('contact.subtitle', v)} rows={2} />
+      <div className="admin-field-row">
+        <Field label="Email" value={contact.email || ''} onChange={v => set('contact.email', v)} />
+        <Field label="Phone" value={contact.phone || ''} onChange={v => set('contact.phone', v)} />
+      </div>
+      <Field label="Address" value={contact.address || ''} onChange={v => set('contact.address', v)} rows={2} />
+      <div style={{ marginTop: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)' }}>HTML Body</label>
+          <button className="btn btn-ghost" style={{ fontSize: 12, padding: '4px 12px' }} onClick={() => setPreview(!preview)}>
+            {preview ? '✏️ Edit' : '👁️ Preview'}
+          </button>
+        </div>
+        {preview ? (
+          <div className="legal-content" style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: 24, maxHeight: 500, overflow: 'auto' }} dangerouslySetInnerHTML={{ __html: contact.body || '' }} />
+        ) : (
+          <textarea value={contact.body || ''} onChange={e => set('contact.body', e.target.value)} rows={18} style={{ width: '100%', fontFamily: 'monospace', fontSize: 13, lineHeight: 1.5, background: 'var(--bg)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: 16, resize: 'vertical' }} />
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── Legal Page Editor ────────────────────────────────────────────────────────
 function LegalEditor({ contentKey }) {
   return function LegalEditorInner({ content, onChange }) {
@@ -1239,6 +1296,8 @@ const NAV_SECTIONS = [
   { id: 'testimonials', icon: '💬', label: 'Testimonials', group: 'content' },
   { id: 'faq', icon: '❓', label: 'FAQ', group: 'content' },
   { id: 'footer', icon: '🦶', label: 'Footer', group: 'content' },
+  { id: 'about', icon: '🏢', label: 'About', group: 'pages' },
+  { id: 'contact', icon: '✉️', label: 'Contact', group: 'pages' },
   { id: 'legalTerms', icon: '📋', label: 'Terms of Service', group: 'legal' },
   { id: 'legalPrivacy', icon: '🔒', label: 'Privacy Policy', group: 'legal' },
   { id: 'legalKvkk', icon: '🛡️', label: 'KVKK Notice', group: 'legal' },
@@ -1257,6 +1316,8 @@ const SECTION_EDITORS = {
   testimonials: TestimonialsEditor,
   faq: FaqEditor,
   footer: FooterEditor,
+  about: AboutEditor,
+  contact: ContactEditor,
   legalTerms: LegalTermsEditor,
   legalPrivacy: LegalPrivacyEditor,
   legalKvkk: LegalKvkkEditor,
@@ -1275,6 +1336,8 @@ const SECTION_DESCRIPTIONS = {
   testimonials: 'Manage customer testimonials and quotes.',
   faq: 'Edit frequently asked questions and answers.',
   footer: 'Configure footer columns, links and copyright text.',
+  about: 'Edit the About page modal — company info, mission and values.',
+  contact: 'Edit the Contact page modal — email, address, phone and additional info.',
   legalTerms: 'Edit the Terms of Service page — title, dates and HTML body.',
   legalPrivacy: 'Edit the Privacy Policy page — title, dates and HTML body.',
   legalKvkk: 'Edit the KVKK data protection notice (Turkish only).',
@@ -1327,6 +1390,12 @@ export default function Admin() {
       if (!legTr.terms) legTr.terms = { ...defaultLegalPage }
       if (!legTr.privacy) legTr.privacy = { ...defaultLegalPage }
       if (!legTr.kvkk) legTr.kvkk = { ...defaultLegalPage }
+      const defaultAbout = { title: '', subtitle: '', body: '' }
+      const defaultContact = { title: '', subtitle: '', email: '', address: '', phone: '', body: '' }
+      if (!en.about) en.about = { ...defaultAbout }
+      if (!tr.about) tr.about = { ...defaultAbout }
+      if (!en.contact) en.contact = { ...defaultContact }
+      if (!tr.contact) tr.contact = { ...defaultContact }
       setSettingsData(s)
       setContentEn(en)
       setContentTr(tr)
@@ -1473,6 +1542,7 @@ export default function Admin() {
         <aside className="admin-sidebar">
           {renderNavGroup('general', 'General')}
           {renderNavGroup('content', 'Content Sections')}
+          {renderNavGroup('pages', 'Pages')}
           {renderNavGroup('legal', 'Legal Pages')}
           {renderNavGroup('tools', 'Tools')}
           <div style={{ borderTop: '1px solid var(--border)', margin: '16px 0', paddingTop: 16 }}>

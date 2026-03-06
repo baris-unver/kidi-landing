@@ -261,8 +261,10 @@ export function FAQ() {
   )
 }
 
+const MODAL_HREFS = { '#about': 'about', '#contact': 'contact' }
+
 export function Footer() {
-  const { content, settings, lang } = useSite()
+  const { content, settings, lang, openModal } = useSite()
   if (!content) return null
   const { footer } = content
   const logo = settings?.logo
@@ -287,10 +289,13 @@ export function Footer() {
                   {col.links.map((link, j) => {
                     const label = typeof link === 'string' ? link : link.label
                     const href = typeof link === 'string' ? '#' : (link.href || '#')
+                    const modalKey = MODAL_HREFS[href]
                     const isInternal = href.startsWith('/') && !href.startsWith('//')
-                    return <li key={j}>{isInternal
-                      ? <Link to={href}>{label}</Link>
-                      : <a href={href}>{label}</a>
+                    return <li key={j}>{modalKey
+                      ? <a href={href} onClick={e => { e.preventDefault(); openModal(modalKey) }}>{label}</a>
+                      : isInternal
+                        ? <Link to={href}>{label}</Link>
+                        : <a href={href}>{label}</a>
                     }</li>
                   })}
                 </ul>

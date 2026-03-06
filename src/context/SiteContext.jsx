@@ -109,6 +109,11 @@ export function SiteProvider({ children }) {
     localStorage.setItem('kidi-lang', next)
   }
 
+  // ── Modal ────────────────────────────────────────
+  const [modal, setModal] = useState(null)
+  const openModal = (name) => setModal(name)
+  const closeModal = () => setModal(null)
+
   // ── Content ────────────────────────────────────────
   const [content, setContent] = useState(null)
   const [settings, setSettings] = useState(null)
@@ -148,7 +153,7 @@ export function SiteProvider({ children }) {
   }, [lang])
 
   return (
-    <SiteContext.Provider value={{ theme, toggleTheme, lang, toggleLang, content, settings, loading }}>
+    <SiteContext.Provider value={{ theme, toggleTheme, lang, toggleLang, content, settings, loading, modal, openModal, closeModal }}>
       {children}
     </SiteContext.Provider>
   )

@@ -226,6 +226,19 @@
       }
     ]
   },
+  "about": {
+    "title": "About kidi.ai",
+    "subtitle": "We believe every child deserves a learning experience that adapts to them — not the other way around.",
+    "body": "<h2>Our Mission</h2>\n<p>kidi.ai was founded with a simple belief: learning should feel like play. We combine cutting-edge AI with child development research to create a learning companion that grows with each child.</p>\n\n<h2>Who We Are</h2>\n<p>We are a passionate team of educators, engineers, and parents based in Ankara, Turkey. Our team at <strong>APPFAB UYGULAMA FABRİKASI YAZILIM ANONİM ŞİRKETİ</strong> is dedicated to making quality education accessible and joyful for every child.</p>\n<div class=\"company-card\">\n<strong>APPFAB UYGULAMA FABRİKASI YAZILIM ANONİM ŞİRKETİ</strong>\nMustafa Kemal Mah. Dumlupınar Blv. B Blok No: 266 B İç Kapı No: 73<br/>\nÇankaya / Ankara, Turkey<br/>\n<a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a>\n</div>\n\n<h2>Our Values</h2>\n<ul>\n<li><strong>Child-first design</strong> — Every decision starts with what's best for the child.</li>\n<li><strong>Privacy by default</strong> — We collect only what's necessary, never sell data, and never show ads.</li>\n<li><strong>Science-backed</strong> — Our curriculum is grounded in language acquisition research and spaced repetition.</li>\n<li><strong>Inclusive</strong> — Learning should be accessible regardless of background or ability.</li>\n</ul>"
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Have a question, partnership idea, or just want to say hi? We'd love to hear from you.",
+    "email": "hello@kidi.ai",
+    "address": "Mustafa Kemal Mah. Dumlupınar Blv. B Blok No: 266 B İç Kapı No: 73, Çankaya / Ankara, Turkey",
+    "phone": "",
+    "body": "<h2>Support</h2>\n<p>For help with your account, device, or subscription, email us at <a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a>. We aim to respond within 24 hours on business days.</p>\n\n<h2>Press & Media</h2>\n<p>For press inquiries, interviews, or media assets, please reach out to <a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a> with the subject line \"Press Inquiry\".</p>\n\n<h2>Partnerships</h2>\n<p>Interested in bringing kidi to your school, institution, or distribution network? We'd love to explore how we can work together. Contact us at <a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a>.</p>"
+  },
   "footer": {
     "tagline": "Making every child a curious, confident learner.",
     "columns": [
@@ -255,7 +268,7 @@
         "links": [
           {
             "label": "About",
-            "href": "#"
+            "href": "#about"
           },
           {
             "label": "Blog",
@@ -280,7 +293,7 @@
           },
           {
             "label": "Contact",
-            "href": "#"
+            "href": "#contact"
           },
           {
             "label": "Privacy Policy",
