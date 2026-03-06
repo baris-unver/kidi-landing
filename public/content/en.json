@@ -8,10 +8,22 @@
   },
   "nav": {
     "links": [
-      { "label": "Features", "href": "#features" },
-      { "label": "How it works", "href": "#how-it-works" },
-      { "label": "Pricing", "href": "#pricing" },
-      { "label": "FAQ", "href": "#faq" }
+      {
+        "label": "Features",
+        "href": "#features"
+      },
+      {
+        "label": "How it works",
+        "href": "#how-it-works"
+      },
+      {
+        "label": "Pricing",
+        "href": "#pricing"
+      },
+      {
+        "label": "FAQ",
+        "href": "#faq"
+      }
     ],
     "cta": "Try for free"
   },
@@ -64,10 +76,22 @@
     "title": "Stay Connected with Your Child's Journey",
     "subtitle": "The parent app gives you full visibility into your child's learning — progress, achievements, and insights — all in the palm of your hand.",
     "features": [
-      { "icon": "📊", "text": "Track learning progress in real-time" },
-      { "icon": "⏰", "text": "Set screen time limits" },
-      { "icon": "🔔", "text": "Get activity notifications" },
-      { "icon": "🎯", "text": "View achievement milestones" }
+      {
+        "icon": "📊",
+        "text": "Track learning progress in real-time"
+      },
+      {
+        "icon": "⏰",
+        "text": "Set screen time limits"
+      },
+      {
+        "icon": "🔔",
+        "text": "Get activity notifications"
+      },
+      {
+        "icon": "🎯",
+        "text": "View achievement milestones"
+      }
     ]
   },
   "howItWorks": {
@@ -203,31 +227,83 @@
       {
         "title": "Product",
         "links": [
-          { "label": "Features", "href": "#features" },
-          { "label": "Pricing", "href": "#pricing" },
-          { "label": "Changelog", "href": "#" },
-          { "label": "Roadmap", "href": "#" }
+          {
+            "label": "Features",
+            "href": "#features"
+          },
+          {
+            "label": "Pricing",
+            "href": "#pricing"
+          },
+          {
+            "label": "Changelog",
+            "href": "#"
+          },
+          {
+            "label": "Roadmap",
+            "href": "#"
+          }
         ]
       },
       {
         "title": "Company",
         "links": [
-          { "label": "About", "href": "#" },
-          { "label": "Blog", "href": "#" },
-          { "label": "Careers", "href": "#" },
-          { "label": "Press", "href": "#" }
+          {
+            "label": "About",
+            "href": "#"
+          },
+          {
+            "label": "Blog",
+            "href": "#"
+          },
+          {
+            "label": "Careers",
+            "href": "#"
+          },
+          {
+            "label": "Press",
+            "href": "#"
+          }
         ]
       },
       {
         "title": "Support",
         "links": [
-          { "label": "Help Center", "href": "#" },
-          { "label": "Contact", "href": "#" },
-          { "label": "Privacy Policy", "href": "#" },
-          { "label": "Terms", "href": "#" }
+          {
+            "label": "Help Center",
+            "href": "#"
+          },
+          {
+            "label": "Contact",
+            "href": "#"
+          },
+          {
+            "label": "Privacy Policy",
+            "href": "/privacy"
+          },
+          {
+            "label": "Terms",
+            "href": "/terms"
+          }
         ]
       }
     ],
     "copyright": "© 2025 kidi.ai. All rights reserved."
+  },
+  "legal": {
+    "terms": {
+      "title": "Terms of Service",
+      "badge": "Legal",
+      "effectiveDate": "1 January 2026",
+      "lastUpdated": "1 January 2026",
+      "body": "<div class=\"info-box\">\n      <p>Please read these Terms carefully before purchasing or using kidi. By placing an order or activating a kidi device, you agree to be bound by these Terms on behalf of yourself and your child.</p>\n    </div>\n\n    <h2>1. Who We Are</h2>\n    <p>kidi.ai is a product of <strong>APPFAB UYGULAMA FABRİKASI YAZILIM ANONİM ŞİRKETİ</strong> (\"APPFAB\", \"we\", \"us\", \"our\"), a company incorporated in Turkey.</p>\n    <div class=\"company-card\">\n      <strong>APPFAB UYGULAMA FABRİKASI YAZILIM ANONİM ŞİRKETİ</strong>\n      Mustafa Kemal Mah. Dumlupınar Blv. B Blok No: 266 B İç Kapı No: 73<br/>\n      Çankaya / Ankara, Turkey<br/>\n      <a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a>\n    </div>\n\n    <h2>2. What kidi Is</h2>\n    <p>kidi is a voice-first smart speaker hardware device designed for children aged 4–6. It teaches English as a foreign language through short, structured daily dialogues. The device includes a small ambient display used only for visual cues such as facial expressions and simple icons. Learning occurs primarily through listening and speaking — not screen interaction.</p>\n    <p>kidi is accompanied by a parent-facing mobile application (\"Parent App\") that provides progress reports, usage controls, and account management.</p>\n\n    <h2>3. Eligibility &amp; Parental Consent</h2>\n    <p>kidi is designed <strong>exclusively for children aged 4 to 6 years old</strong>. The device must be purchased and activated by a parent or legal guardian who is at least 18 years of age.</p>\n    <p>By creating an account, you confirm that:</p>\n    <ul>\n      <li>You are the parent or legal guardian of the child who will use kidi.</li>\n      <li>You have the legal authority to accept these Terms on behalf of your child.</li>\n      <li>You will supervise your child's use of kidi in accordance with these Terms.</li>\n    </ul>\n    <p>We do not knowingly collect personal data directly from children. All account management is handled through the Parent App by the adult account holder.</p>\n\n    <h2>4. Device Purchase &amp; Hardware</h2>\n    <h3>4.1 One-time Purchase</h3>\n    <p>The kidi hardware device is sold as a one-time purchase. Title to the hardware passes to you upon delivery. APPFAB retains all intellectual property rights in the firmware, software, and content on the device.</p>\n    <h3>4.2 Warranty</h3>\n    <p>The kidi device comes with a 2-year limited hardware warranty covering manufacturing defects under normal use conditions. The warranty does not cover physical damage, liquid damage, or unauthorized modifications.</p>\n    <h3>4.3 Returns</h3>\n    <p>You may return an unopened kidi device within 14 days of delivery for a full refund. Opened devices may be returned within 14 days if the device is defective. To initiate a return, contact <a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a>.</p>\n\n    <h2>5. Subscription &amp; Billing</h2>\n    <h3>5.1 Subscription Requirement</h3>\n    <p>A paid subscription is required to access the kidi curriculum, AI conversation engine, and Parent App features beyond the included trial period. The first month is included free with hardware purchase.</p>\n    <h3>5.2 Billing</h3>\n    <p>Subscriptions are billed monthly or annually depending on the plan selected at checkout. All prices are inclusive of applicable taxes where required by law.</p>\n    <h3>5.3 Cancellation</h3>\n    <p>You may cancel your subscription at any time through the Parent App. Cancellation takes effect at the end of the current billing period. We do not offer partial refunds for unused subscription time, except where required by applicable law.</p>\n    <h3>5.4 Price Changes</h3>\n    <p>We will notify you at least 30 days before any subscription price increase. Continued use after the effective date constitutes acceptance of the new price.</p>\n\n    <h2>6. Acceptable Use</h2>\n    <p>You agree to use kidi only for its intended purpose of supporting your child's English language learning. You must not:</p>\n    <ul>\n      <li>Attempt to reverse-engineer, modify, or tamper with the device hardware or firmware.</li>\n      <li>Use kidi for commercial purposes or resell access to the platform.</li>\n      <li>Attempt to circumvent the content safety systems on the device.</li>\n      <li>Allow children outside the registered age range to use the device in ways it was not designed for.</li>\n      <li>Use the device in a manner that violates applicable laws or regulations.</li>\n    </ul>\n\n    <h2>7. Intellectual Property</h2>\n    <p>All content on the kidi device — including the curriculum, lesson dialogues, character designs, voice assets, and software — is the exclusive intellectual property of APPFAB or its licensors. You receive a limited, non-exclusive, non-transferable licence to use this content solely for your child's personal, non-commercial learning.</p>\n\n    <h2>8. Privacy &amp; Child Data</h2>\n    <p>We are committed to protecting children's privacy. Please read our <a href=\"/privacy\">Privacy Policy</a> and our <a href=\"/kvkk\">KVKK Notice</a> carefully — they form part of these Terms. Key points:</p>\n    <ul>\n      <li>Voice audio is processed in real-time and is not retained long-term.</li>\n      <li>We do not display advertisements to children.</li>\n      <li>We do not sell any personal data.</li>\n      <li>Parents can request data deletion at any time via <a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a>.</li>\n    </ul>\n\n    <h2>9. Limitation of Liability</h2>\n    <p>To the maximum extent permitted by applicable law, APPFAB's liability to you for any claim arising out of these Terms shall not exceed the amount you paid for the device and/or subscription in the 12 months preceding the claim.</p>\n    <p>APPFAB is not liable for: indirect or consequential loss; loss of data; loss of educational progress or outcomes; or interruption of service due to reasons beyond our reasonable control.</p>\n\n    <h2>10. Service Availability</h2>\n    <p>We aim to provide uninterrupted service but cannot guarantee 100% uptime. We may perform scheduled maintenance (with advance notice where possible) and reserve the right to modify or discontinue features with reasonable notice. In the event of permanent discontinuation of the service, we will offer a pro-rated refund of any prepaid subscription fees.</p>\n\n    <h2>11. Governing Law &amp; Disputes</h2>\n    <p>These Terms are governed by the laws of the Republic of Turkey. Any dispute arising from these Terms shall first be submitted to good-faith negotiation. If unresolved, disputes shall be subject to the exclusive jurisdiction of the courts of Ankara, Turkey.</p>\n    <p>Consumers in the European Union retain the right to bring claims before the courts of their country of residence under applicable EU consumer protection law.</p>\n\n    <h2>12. Changes to These Terms</h2>\n    <p>We may update these Terms from time to time. We will notify you of material changes by email or via the Parent App at least 14 days before they take effect. Your continued use of kidi after the effective date constitutes acceptance of the updated Terms.</p>\n\n    <h2>13. Contact</h2>\n    <p>For any questions about these Terms, please contact us:</p>\n    <div class=\"company-card\">\n      <strong>APPFAB UYGULAMA FABRİKASI YAZILIM ANONİM ŞİRKETİ</strong>\n      Mustafa Kemal Mah. Dumlupınar Blv. B Blok No: 266 B İç Kapı No: 73<br/>\n      Çankaya / Ankara, Turkey<br/>\n      <a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a>\n    </div>"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "badge": "Privacy",
+      "effectiveDate": "1 January 2026",
+      "lastUpdated": "1 January 2026",
+      "body": "<div class=\"info-box\">\n      <p>kidi is designed for young children. We take their privacy extremely seriously. We collect the minimum data necessary to provide the service, we never show ads, and we never sell data. This policy explains exactly what we collect, why, and what your rights are.</p>\n    </div>\n\n    <h2>1. Data Controller</h2>\n    <p>The data controller for all personal data processed in connection with kidi is:</p>\n    <div class=\"company-card\">\n      <strong>APPFAB UYGULAMA FABRİKASI YAZILIM ANONİM ŞİRKETİ</strong>\n      Mustafa Kemal Mah. Dumlupınar Blv. B Blok No: 266 B İç Kapı No: 73<br/>\n      Çankaya / Ankara, Turkey<br/>\n      <a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a>\n    </div>\n\n    <h2>2. Children's Privacy — Our Core Commitment</h2>\n    <p>kidi is used by children aged 4–6. We design our data practices around this fact:</p>\n    <ul>\n      <li><strong>No direct data collection from children.</strong> Children do not create accounts. All account management is handled by the parent in the Parent App.</li>\n      <li><strong>No advertising.</strong> We never display ads to children or use child interaction data to build advertising profiles.</li>\n      <li><strong>No data selling.</strong> We do not sell any personal data — whether belonging to parents or children.</li>\n      <li><strong>Minimal data principle.</strong> We collect only what is strictly necessary to provide the learning service.</li>\n      <li><strong>Voice data is not retained.</strong> Voice audio captured during sessions is processed in real-time by our AI and is not stored in identifiable form beyond the active session.</li>\n    </ul>\n    <p>We comply with the Turkish Personal Data Protection Law (KVKK), the EU General Data Protection Regulation (GDPR), and the US Children's Online Privacy Protection Act (COPPA) where applicable.</p>\n\n    <h2>3. What Data We Collect</h2>\n\n    <h3>3.1 Parent / Account Holder Data</h3>\n    <table class=\"legal-table\">\n      <tr><th>Data</th><th>Purpose</th><th>Legal Basis</th></tr>\n      <tr><td>Name</td><td>Account identification</td><td>Contract performance</td></tr>\n      <tr><td>Email address</td><td>Account login, notifications, support</td><td>Contract performance</td></tr>\n      <tr><td>Password (hashed)</td><td>Account security</td><td>Contract performance</td></tr>\n      <tr><td>Billing information</td><td>Payment processing (not stored by us)</td><td>Contract performance</td></tr>\n      <tr><td>Device delivery address</td><td>Shipping hardware</td><td>Contract performance</td></tr>\n      <tr><td>App usage logs</td><td>Service improvement, bug fixing</td><td>Legitimate interest</td></tr>\n    </table>\n\n    <h3>3.2 Child Profile Data (entered by parent)</h3>\n    <table class=\"legal-table\">\n      <tr><th>Data</th><th>Purpose</th><th>Legal Basis</th></tr>\n      <tr><td>Child's first name</td><td>Personalised greetings by kidi</td><td>Contract performance</td></tr>\n      <tr><td>Child's age (year)</td><td>Curriculum calibration</td><td>Contract performance</td></tr>\n      <tr><td>Learning level</td><td>Lesson difficulty adjustment</td><td>Contract performance</td></tr>\n    </table>\n\n    <h3>3.3 Learning Session Data</h3>\n    <table class=\"legal-table\">\n      <tr><th>Data</th><th>Purpose</th><th>Legal Basis</th></tr>\n      <tr><td>Session duration</td><td>Progress reports, usage limits</td><td>Contract performance</td></tr>\n      <tr><td>Lessons completed</td><td>Curriculum progress tracking</td><td>Contract performance</td></tr>\n      <tr><td>Words/patterns attempted</td><td>Adaptive curriculum adjustment</td><td>Contract performance</td></tr>\n      <tr><td>Response patterns (not audio)</td><td>AI personalisation</td><td>Contract performance</td></tr>\n    </table>\n\n    <h3>3.4 Voice Audio</h3>\n    <p>Voice audio captured from the child during a session is transmitted securely to our AI processing service for real-time speech recognition and response generation. <strong>Audio is not stored</strong> in identifiable form after processing. Anonymised acoustic patterns may be retained for model improvement purposes only, with no link to any individual child.</p>\n\n    <h2>4. How We Use Data</h2>\n    <ul>\n      <li>To provide and improve the kidi learning service</li>\n      <li>To personalise the curriculum to the child's level and progress</li>\n      <li>To generate progress reports for parents</li>\n      <li>To enforce usage limits set by parents</li>\n      <li>To send transactional emails (order confirmation, subscription updates)</li>\n      <li>To provide customer support</li>\n      <li>To comply with legal obligations</li>\n    </ul>\n    <p>We do <strong>not</strong> use data for: advertising, profiling, sale to third parties, or any purpose unrelated to the educational service.</p>\n\n    <h2>5. Data Sharing</h2>\n    <p>We do not sell or rent personal data. We share data only with the following categories of service providers, under binding data processing agreements:</p>\n    <ul>\n      <li><strong>Cloud infrastructure provider</strong> — for hosting the service and data storage</li>\n      <li><strong>AI/speech processing provider</strong> — for real-time voice interaction (audio is not retained)</li>\n      <li><strong>Payment processor</strong> — for billing (we do not store payment card details)</li>\n      <li><strong>Email service provider</strong> — for transactional emails</li>\n    </ul>\n    <p>All service providers are contractually prohibited from using kidi data for any purpose other than providing the specific service to us.</p>\n    <p>We may also disclose data where required by Turkish law, court order, or regulatory authority.</p>\n\n    <h2>6. Data Retention</h2>\n    <ul>\n      <li><strong>Account data:</strong> Retained while your account is active and for 30 days after deletion request, then permanently deleted.</li>\n      <li><strong>Child profile &amp; learning data:</strong> Retained while the account is active. Deleted within 30 days of account deletion request.</li>\n      <li><strong>Voice audio:</strong> Not retained beyond the active session.</li>\n      <li><strong>Billing records:</strong> Retained for 10 years as required by Turkish tax law.</li>\n    </ul>\n\n    <h2>7. Data Security</h2>\n    <p>We implement appropriate technical and organisational measures to protect personal data, including:</p>\n    <ul>\n      <li>TLS encryption for all data in transit</li>\n      <li>Encryption at rest for stored personal data</li>\n      <li>Strict access controls — only authorised personnel can access personal data</li>\n      <li>Regular security assessments</li>\n    </ul>\n    <p>In the event of a data breach affecting your rights, we will notify you within 72 hours of becoming aware of it, as required by applicable law.</p>\n\n    <h2>8. International Data Transfers</h2>\n    <p>Our primary infrastructure is located in Turkey and the European Economic Area (EEA). If any data is transferred outside Turkey or the EEA, we ensure appropriate safeguards are in place in accordance with KVKK and GDPR requirements.</p>\n\n    <h2>9. Your Rights</h2>\n    <p>As a parent and account holder, you have the following rights regarding your personal data and your child's profile data:</p>\n    <ul>\n      <li><strong>Right to access</strong> — request a copy of the data we hold about you</li>\n      <li><strong>Right to rectification</strong> — request correction of inaccurate data</li>\n      <li><strong>Right to erasure</strong> — request deletion of your and your child's data</li>\n      <li><strong>Right to restriction</strong> — request limited processing in certain circumstances</li>\n      <li><strong>Right to data portability</strong> — receive your data in a structured, machine-readable format</li>\n      <li><strong>Right to object</strong> — object to processing based on legitimate interest</li>\n    </ul>\n    <p>To exercise any of these rights, email us at <a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a>. We will respond within 30 days. You also have the right to lodge a complaint with the Turkish Personal Data Protection Authority (KVKK Kurumu) or your local data protection authority.</p>\n\n    <h2>10. Cookies</h2>\n    <p>The kidi device itself does not use cookies. The Parent App (web version) uses the following cookies:</p>\n    <ul>\n      <li><strong>Essential cookies:</strong> Required for login session management. These cannot be disabled.</li>\n      <li><strong>Analytics cookies:</strong> Used to understand how parents use the app, in anonymised form. You may opt out via app settings.</li>\n    </ul>\n    <p>We do not use advertising or tracking cookies.</p>\n\n    <h2>11. Changes to This Policy</h2>\n    <p>We may update this Privacy Policy from time to time. We will notify you of material changes by email or via the Parent App at least 14 days before they take effect.</p>\n\n    <h2>12. Contact</h2>\n    <p>For any privacy questions or to exercise your rights:</p>\n    <div class=\"company-card\">\n      <strong>APPFAB UYGULAMA FABRİKASI YAZILIM ANONİM ŞİRKETİ</strong>\n      Mustafa Kemal Mah. Dumlupınar Blv. B Blok No: 266 B İç Kapı No: 73<br/>\n      Çankaya / Ankara, Turkey<br/>\n      <a href=\"mailto:hello@kidi.ai\">hello@kidi.ai</a>\n    </div>"
+    }
   }
 }

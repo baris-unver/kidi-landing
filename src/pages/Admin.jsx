@@ -744,6 +744,77 @@ function FooterEditor({ content, onChange }) {
   )
 }
 
+// ─── Legal Page Editor ────────────────────────────────────────────────────────
+function LegalEditor({ contentKey }) {
+  return function LegalEditorInner({ content, onChange }) {
+    const { set } = useContentHelpers(content, onChange)
+    const [preview, setPreview] = useState(false)
+    const page = content?.legal?.[contentKey] || {}
+    const prefix = `legal.${contentKey}`
+
+    return (
+      <div className="admin-card">
+        <div className="admin-field-row">
+          <Field label="Page title" value={page.title || ''} onChange={v => set(`${prefix}.title`, v)} />
+          <Field label="Badge text" value={page.badge || ''} onChange={v => set(`${prefix}.badge`, v)} />
+        </div>
+        <div className="admin-field-row">
+          <Field label="Effective date" value={page.effectiveDate || ''} onChange={v => set(`${prefix}.effectiveDate`, v)} />
+          <Field label="Last updated" value={page.lastUpdated || ''} onChange={v => set(`${prefix}.lastUpdated`, v)} />
+        </div>
+        <div style={{ marginTop: 16 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)' }}>HTML Body</label>
+            <button
+              className="btn btn-ghost"
+              style={{ fontSize: 12, padding: '4px 12px' }}
+              onClick={() => setPreview(!preview)}
+            >
+              {preview ? '✏️ Edit' : '👁️ Preview'}
+            </button>
+          </div>
+          {preview ? (
+            <div
+              className="legal-content"
+              style={{
+                background: 'var(--bg)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '24px',
+                maxHeight: 600,
+                overflow: 'auto',
+              }}
+              dangerouslySetInnerHTML={{ __html: page.body || '' }}
+            />
+          ) : (
+            <textarea
+              value={page.body || ''}
+              onChange={e => set(`${prefix}.body`, e.target.value)}
+              rows={24}
+              style={{
+                width: '100%',
+                fontFamily: 'monospace',
+                fontSize: 13,
+                lineHeight: 1.5,
+                background: 'var(--bg)',
+                color: 'var(--text)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-sm)',
+                padding: 16,
+                resize: 'vertical',
+              }}
+            />
+          )}
+        </div>
+      </div>
+    )
+  }
+}
+
+const LegalTermsEditor = LegalEditor({ contentKey: 'terms' })
+const LegalPrivacyEditor = LegalEditor({ contentKey: 'privacy' })
+const LegalKvkkEditor = LegalEditor({ contentKey: 'kvkk' })
+
 // ─── Admin Login ──────────────────────────────────────────────────────────────
 function AdminLogin({ onLogin }) {
   const [pw, setPw] = useState('')
@@ -1131,6 +1202,9 @@ const NAV_SECTIONS = [
   { id: 'testimonials', icon: '💬', label: 'Testimonials', group: 'content' },
   { id: 'faq', icon: '❓', label: 'FAQ', group: 'content' },
   { id: 'footer', icon: '🦶', label: 'Footer', group: 'content' },
+  { id: 'legalTerms', icon: '📋', label: 'Terms of Service', group: 'legal' },
+  { id: 'legalPrivacy', icon: '🔒', label: 'Privacy Policy', group: 'legal' },
+  { id: 'legalKvkk', icon: '🛡️', label: 'KVKK Notice', group: 'legal' },
   { id: 'bulk', icon: '📦', label: 'Export / Import', group: 'tools' },
   { id: 'backup', icon: '💾', label: 'Backup / Restore', group: 'tools' },
 ]
@@ -1146,6 +1220,9 @@ const SECTION_EDITORS = {
   testimonials: TestimonialsEditor,
   faq: FaqEditor,
   footer: FooterEditor,
+  legalTerms: LegalTermsEditor,
+  legalPrivacy: LegalPrivacyEditor,
+  legalKvkk: LegalKvkkEditor,
 }
 
 const SECTION_DESCRIPTIONS = {
@@ -1161,6 +1238,9 @@ const SECTION_DESCRIPTIONS = {
   testimonials: 'Manage customer testimonials and quotes.',
   faq: 'Edit frequently asked questions and answers.',
   footer: 'Configure footer columns, links and copyright text.',
+  legalTerms: 'Edit the Terms of Service page — title, dates and HTML body.',
+  legalPrivacy: 'Edit the Privacy Policy page — title, dates and HTML body.',
+  legalKvkk: 'Edit the KVKK data protection notice (Turkish only).',
   bulk: 'Export all content as JSON, edit externally, then import back.',
   backup: 'Download a full backup (content + images) or restore from a previous one.',
 }
@@ -1191,6 +1271,14 @@ export default function Admin() {
       }
       if (!en.parentApp) en.parentApp = defaultParentApp
       if (!tr.parentApp) tr.parentApp = { ...defaultParentApp }
+      const defaultLegalPage = { title: '', badge: '', effectiveDate: '', lastUpdated: '', body: '' }
+      if (!en.legal) en.legal = {}
+      if (!en.legal.terms) en.legal.terms = { ...defaultLegalPage }
+      if (!en.legal.privacy) en.legal.privacy = { ...defaultLegalPage }
+      if (!tr.legal) tr.legal = {}
+      if (!tr.legal.terms) tr.legal.terms = { ...defaultLegalPage }
+      if (!tr.legal.privacy) tr.legal.privacy = { ...defaultLegalPage }
+      if (!tr.legal.kvkk) tr.legal.kvkk = { ...defaultLegalPage }
       setSettingsData(s)
       setContentEn(en)
       setContentTr(tr)
@@ -1313,6 +1401,7 @@ export default function Admin() {
         <aside className="admin-sidebar">
           {renderNavGroup('general', 'General')}
           {renderNavGroup('content', 'Content Sections')}
+          {renderNavGroup('legal', 'Legal Pages')}
           {renderNavGroup('tools', 'Tools')}
           <div style={{ borderTop: '1px solid var(--border)', margin: '16px 0', paddingTop: 16 }}>
             <div style={{ padding: '8px 20px', fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5, fontWeight: 600 }}>
@@ -1342,7 +1431,7 @@ export default function Admin() {
               <WhatsAppEditor settings={settingsData} onChange={handleSettingsChange} />
             )}
 
-            {isReady && EditorComp && (
+            {isReady && EditorComp && activeSection !== 'legalKvkk' && (
               <SectionWithLang
                 contentEn={contentEn}
                 contentTr={contentTr}
@@ -1350,6 +1439,15 @@ export default function Admin() {
                 onTrChange={handleTrChange}
                 editor={EditorComp}
               />
+            )}
+
+            {isReady && activeSection === 'legalKvkk' && (
+              <>
+                <div style={{ marginBottom: 12, fontSize: 13, fontWeight: 700, color: 'var(--text-muted)' }}>
+                  🇹🇷 Turkish only — KVKK is a Turkish regulation
+                </div>
+                <LegalKvkkEditor content={contentTr} onChange={handleTrChange} />
+              </>
             )}
 
             {isReady && activeSection === 'parentApp' && (
