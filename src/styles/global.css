@@ -1117,6 +1117,29 @@ button { font-family: var(--font); cursor: pointer; border: none; }
   transition: opacity 0.2s;
 }
 .footer-col-links li a:hover { opacity: 1; }
+.footer-social-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.footer-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity 0.2s, background 0.2s, transform 0.2s;
+}
+.footer-social-link:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+}
 .footer-legal-links {
   display: flex;
   gap: 24px;

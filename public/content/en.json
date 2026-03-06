@@ -310,6 +310,12 @@
         ]
       }
     ],
-    "copyright": "© 2025 kidi.ai. All rights reserved."
+    "copyright": "© 2025 kidi.ai. All rights reserved.",
+    "social": [
+      { "platform": "instagram", "url": "https://instagram.com/kidi.ai", "label": "Instagram" },
+      { "platform": "twitter", "url": "https://x.com/kidi_ai", "label": "X (Twitter)" },
+      { "platform": "linkedin", "url": "https://linkedin.com/company/kidi-ai", "label": "LinkedIn" },
+      { "platform": "youtube", "url": "https://youtube.com/@kidi-ai", "label": "YouTube" }
+    ]
   }
 }

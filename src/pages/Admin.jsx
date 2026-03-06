@@ -770,6 +770,52 @@ function FooterEditor({ content, onChange }) {
         </div>
       ))}
       <AddItemButton label="Add column" onClick={() => addItem('footer.columns', { title: '', links: [] })} />
+
+      <div style={{ marginTop: 24, borderTop: '1px solid var(--border)', paddingTop: 20 }}>
+        <label style={{ display: 'block', fontSize: 14, fontWeight: 800, marginBottom: 12, color: 'var(--text)' }}>Social Media Links</label>
+        {(content.footer?.social || []).map((s, i) => (
+          <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
+            <select value={s.platform || ''} onChange={e => {
+              const next = structuredClone(content)
+              next.footer.social[i].platform = e.target.value
+              onChange(next)
+            }} style={{ padding: '8px 12px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontFamily: 'var(--font)', fontSize: 14, color: 'var(--text)', minWidth: 120 }}>
+              <option value="">Platform</option>
+              <option value="instagram">Instagram</option>
+              <option value="twitter">X (Twitter)</option>
+              <option value="facebook">Facebook</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="youtube">YouTube</option>
+              <option value="tiktok">TikTok</option>
+            </select>
+            <input type="text" value={s.label || ''} placeholder="Label"
+              onChange={e => {
+                const next = structuredClone(content)
+                next.footer.social[i].label = e.target.value
+                onChange(next)
+              }}
+              style={inputStyle} />
+            <input type="text" value={s.url || ''} placeholder="https://..."
+              onChange={e => {
+                const next = structuredClone(content)
+                next.footer.social[i].url = e.target.value
+                onChange(next)
+              }}
+              style={inputStyle} />
+            <button className="btn btn-ghost admin-remove-btn" onClick={() => {
+              const next = structuredClone(content)
+              next.footer.social.splice(i, 1)
+              onChange(next)
+            }} title="Remove">✕</button>
+          </div>
+        ))}
+        <AddItemButton label="Add social link" onClick={() => {
+          const next = structuredClone(content)
+          if (!next.footer.social) next.footer = { ...next.footer, social: [] }
+          next.footer.social.push({ platform: '', url: '', label: '' })
+          onChange(next)
+        }} />
+      </div>
     </div>
   )
 }
@@ -1335,7 +1381,7 @@ const SECTION_DESCRIPTIONS = {
   pricing: 'Configure pricing plans, features and badges.',
   testimonials: 'Manage customer testimonials and quotes.',
   faq: 'Edit frequently asked questions and answers.',
-  footer: 'Configure footer columns, links and copyright text.',
+  footer: 'Configure footer columns, links, social media accounts and copyright text.',
   about: 'Edit the About page modal — company info, mission and values.',
   contact: 'Edit the Contact page modal — email, address, phone and additional info.',
   legalTerms: 'Edit the Terms of Service page — title, dates and HTML body.',
