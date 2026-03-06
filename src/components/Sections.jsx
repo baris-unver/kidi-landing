@@ -304,6 +304,8 @@ export function Footer() {
           </div>
         </div>
         <div className="footer-legal-links">
+          <a href="#about" onClick={e => { e.preventDefault(); openModal('about') }}>{lang === 'tr' ? 'Hakkımızda' : 'About'}</a>
+          <a href="#contact" onClick={e => { e.preventDefault(); openModal('contact') }}>{lang === 'tr' ? 'İletişim' : 'Contact'}</a>
           <Link to="/terms">{lang === 'tr' ? 'Kullanım Koşulları' : 'Terms of Service'}</Link>
           <Link to="/privacy">{lang === 'tr' ? 'Gizlilik Politikası' : 'Privacy Policy'}</Link>
           <Link to="/kvkk">KVKK</Link>
