@@ -28,12 +28,18 @@ export default function Hero() {
           <p className="hero-subtitle reveal">{hero.subtitle}</p>
 
           <div className="hero-actions reveal">
-            <a href="#pricing" className="btn btn-primary">
-              {hero.cta} →
-            </a>
-            <button className="btn btn-ghost">
-              ▶ {hero.ctaSecondary}
-            </button>
+            {hero.cta && (
+              <a href={hero.ctaLink || '#pricing'} className="btn btn-primary"
+                {...(hero.ctaLink?.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                {hero.cta} →
+              </a>
+            )}
+            {hero.ctaSecondary && (
+              <a href={hero.ctaSecondaryLink || '#features'} className="btn btn-ghost"
+                {...(hero.ctaSecondaryLink?.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                ▶ {hero.ctaSecondary}
+              </a>
+            )}
           </div>
 
           <div className="hero-trust reveal">

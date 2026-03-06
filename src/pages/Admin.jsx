@@ -472,8 +472,12 @@ function HeroEditor({ content, onChange }) {
       </div>
       <Field label="Subtitle" value={content.hero?.subtitle} onChange={v => set('hero.subtitle', v)} rows={2} />
       <div className="admin-field-row">
-        <Field label="Primary CTA button" value={content.hero?.cta} onChange={v => set('hero.cta', v)} />
-        <Field label="Secondary CTA button" value={content.hero?.ctaSecondary} onChange={v => set('hero.ctaSecondary', v)} />
+        <Field label="Primary CTA text" value={content.hero?.cta} onChange={v => set('hero.cta', v)} />
+        <Field label="Primary CTA link" value={content.hero?.ctaLink} onChange={v => set('hero.ctaLink', v)} placeholder="#pricing" />
+      </div>
+      <div className="admin-field-row">
+        <Field label="Secondary CTA text" value={content.hero?.ctaSecondary} onChange={v => set('hero.ctaSecondary', v)} />
+        <Field label="Secondary CTA link" value={content.hero?.ctaSecondaryLink} onChange={v => set('hero.ctaSecondaryLink', v)} placeholder="#features" />
       </div>
       <Field label="Trust line (below buttons)" value={content.hero?.trustLine} onChange={v => set('hero.trustLine', v)} />
 
