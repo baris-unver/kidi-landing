@@ -477,9 +477,53 @@ app.use(express.static(DIST_DIR, {
   },
 }))
 
-app.get('/{*splat}', (req, res) => {
-  res.sendFile(path.join(DIST_DIR, 'index.html'))
+app.get('/{*splat}', async (req, res) => {
+  try {
+    let html = await fs.readFile(path.join(DIST_DIR, 'index.html'), 'utf-8')
+
+    const readJson = async (file) => {
+      for (const dir of [DATA_DIR, path.join(DIST_DIR, 'content')]) {
+        try { return JSON.parse(await fs.readFile(path.join(dir, file), 'utf-8')) } catch { /* try next */ }
+      }
+      return {}
+    }
+    const [settings, en] = await Promise.all([readJson('settings.json'), readJson('en.json')])
+    const meta = en.meta || {}
+    const seo = settings.seo || {}
+    const title = meta.ogTitle || meta.title || 'kidi.ai'
+    const desc = meta.ogDescription || meta.description || ''
+    const siteUrl = seo.siteUrl || 'https://kidi.ai'
+    let ogImage = seo.ogImage || ''
+    if (ogImage && ogImage.startsWith('/')) ogImage = siteUrl.replace(/\/+$/, '') + ogImage
+
+    const replacements = [
+      [/(<meta\s+property="og:title"\s+content=")([^"]*)(")/, `$1${esc(title)}$3`],
+      [/(<meta\s+property="og:description"\s+content=")([^"]*)(")/, `$1${esc(desc)}$3`],
+      [/(<meta\s+property="og:url"\s+content=")([^"]*)(")/, `$1${esc(siteUrl)}$3`],
+      [/(<meta\s+property="og:image"\s+content=")([^"]*)(")/, `$1${esc(ogImage)}$3`],
+      [/(<meta\s+name="twitter:title"\s+content=")([^"]*)(")/, `$1${esc(title)}$3`],
+      [/(<meta\s+name="twitter:description"\s+content=")([^"]*)(")/, `$1${esc(desc)}$3`],
+      [/(<meta\s+name="twitter:image"\s+content=")([^"]*)(")/, `$1${esc(ogImage)}$3`],
+      [/(<meta\s+name="description"\s+content=")([^"]*)(")/, `$1${esc(desc)}$3`],
+      [/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`],
+    ]
+    for (const [re, replacement] of replacements) {
+      html = html.replace(re, replacement)
+    }
+    if (!ogImage) {
+      html = html.replace(/<meta\s+property="og:image"\s+content="[^"]*"\s*\/?>[\r\n]*/g, '')
+      html = html.replace(/<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/?>[\r\n]*/g, '')
+      html = html.replace(/<meta\s+name="twitter:card"\s+content="[^"]*"\s*\/?>/, '<meta name="twitter:card" content="summary" />')
+    }
+    res.setHeader('Content-Type', 'text/html')
+    res.setHeader('Cache-Control', 'no-cache')
+    res.send(html)
+  } catch {
+    res.sendFile(path.join(DIST_DIR, 'index.html'))
+  }
 })
+
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }
 
 // Express requires exactly 4 params to detect this as an error handler
 // eslint-disable-next-line no-unused-vars
