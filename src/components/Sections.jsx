@@ -315,13 +315,16 @@ export function Footer() {
             {footer.social?.length > 0 && (
               <div>
                 <div className="footer-col-title">{lang === 'tr' ? 'Bizi Takip Edin' : 'Follow Us'}</div>
-                <div className="footer-social-links">
+                <ul className="footer-col-links">
                   {footer.social.map((s, i) => (
-                    <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" className="footer-social-link" title={s.label}>
-                      {SOCIAL_ICONS[s.platform] || <span>{s.label}</span>}
-                    </a>
+                    <li key={i}>
+                      <a href={s.url} target="_blank" rel="noopener noreferrer" className="footer-social-item">
+                        <span className="footer-social-icon">{SOCIAL_ICONS[s.platform]}</span>
+                        {s.label}
+                      </a>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
             )}
           </div>
