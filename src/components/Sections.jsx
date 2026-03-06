@@ -276,7 +276,9 @@ export function Footer() {
   const { content, settings, lang, openModal } = useSite()
   if (!content) return null
   const { footer } = content
-  const logo = settings?.logo
+  const fl = settings?.footerLogo
+  const hasFooterLogo = fl?.imageUrl || fl?.text
+  const logo = hasFooterLogo ? fl : settings?.logo
   return (
     <footer className="footer">
       <div className="container">
@@ -284,7 +286,7 @@ export function Footer() {
           <div className="footer-brand">
             <div className="nav-logo">
               {logo?.imageUrl
-                ? <img src={logo.imageUrl} alt={logo.text || 'kidi.ai'} style={{ width: logo.width || 120, filter: 'brightness(0) invert(1)' }} />
+                ? <img src={logo.imageUrl} alt={logo.text || 'kidi.ai'} style={{ width: logo.width || 120, height: logo.height || 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
                 : <span>{logo?.text || 'kidi.ai'}</span>
               }
             </div>

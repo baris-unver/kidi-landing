@@ -296,6 +296,23 @@ function SettingsEditor({ settings, onChange }) {
       </div>
 
       <div className="admin-card">
+        <div className="admin-card-title">🎨 Footer Logo</div>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 12px' }}>
+          Separate logo for the footer. If left empty, the main logo above is used.
+        </p>
+        <Field label="Footer logo text (shown when no image)" value={settings.footerLogo?.text}
+          onChange={v => set('footerLogo.text', v)} />
+        <div className="admin-field-row">
+          <Field label="Width (px)" value={settings.footerLogo?.width}
+            onChange={v => set('footerLogo.width', parseInt(v) || 0)} type="number" />
+          <Field label="Height (px)" value={settings.footerLogo?.height}
+            onChange={v => set('footerLogo.height', parseInt(v) || 0)} type="number" />
+        </div>
+        <ImageField label="Footer logo image (optional — replaces text)" value={settings.footerLogo?.imageUrl}
+          onChange={v => set('footerLogo.imageUrl', v)} previewSize={120} />
+      </div>
+
+      <div className="admin-card">
         <div className="admin-card-title">🔖 Favicon</div>
         <ImageField label="Favicon (ICO, PNG, SVG — 32×32 recommended)"
           value={settings.favicon?.imageUrl}
