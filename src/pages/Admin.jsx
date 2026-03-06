@@ -957,7 +957,12 @@ function BackupRestoreEditor() {
       const res = await fetch('/api/backup', {
         headers: { Authorization: `Bearer ${getToken()}` },
       })
-      if (!res.ok) throw new Error('Download failed')
+      if (!res.ok) {
+        const body = await res.text().catch(() => '')
+        let msg = `Server returned ${res.status}`
+        try { msg = JSON.parse(body).error || msg } catch { /* not json */ }
+        throw new Error(msg)
+      }
       const blob = await res.blob()
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
