@@ -284,6 +284,10 @@
           {
             "label": "Şartlar",
             "href": "/terms"
+          },
+          {
+            "label": "KVKK",
+            "href": "/kvkk"
           }
         ]
       }

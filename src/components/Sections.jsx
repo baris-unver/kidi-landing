@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useSite } from '../context/SiteContext'
 import useScrollReveal from '../hooks/useScrollReveal'
 
@@ -286,7 +287,11 @@ export function Footer() {
                   {col.links.map((link, j) => {
                     const label = typeof link === 'string' ? link : link.label
                     const href = typeof link === 'string' ? '#' : (link.href || '#')
-                    return <li key={j}><a href={href}>{label}</a></li>
+                    const isInternal = href.startsWith('/') && !href.startsWith('//')
+                    return <li key={j}>{isInternal
+                      ? <Link to={href}>{label}</Link>
+                      : <a href={href}>{label}</a>
+                    }</li>
                   })}
                 </ul>
               </div>

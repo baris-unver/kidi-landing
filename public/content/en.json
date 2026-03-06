@@ -284,6 +284,10 @@
           {
             "label": "Terms",
             "href": "/terms"
+          },
+          {
+            "label": "KVKK",
+            "href": "/kvkk"
           }
         ]
       }
