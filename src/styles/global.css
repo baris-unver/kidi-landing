@@ -1117,6 +1117,22 @@ button { font-family: var(--font); cursor: pointer; border: none; }
   transition: opacity 0.2s;
 }
 .footer-col-links li a:hover { opacity: 1; }
+.footer-legal-links {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 20px 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.footer-legal-links a {
+  font-size: 13px;
+  font-weight: 600;
+  color: inherit;
+  opacity: 0.6;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.footer-legal-links a:hover { opacity: 1; }
 .footer-bottom {
   border-top: 1px solid rgba(255,255,255,0.1);
   padding-top: 32px;

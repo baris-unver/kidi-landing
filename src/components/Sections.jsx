@@ -298,6 +298,11 @@ export function Footer() {
             ))}
           </div>
         </div>
+        <div className="footer-legal-links">
+          <Link to="/terms">{content.legal?.terms?.title || 'Terms of Service'}</Link>
+          <Link to="/privacy">{content.legal?.privacy?.title || 'Privacy Policy'}</Link>
+          <Link to="/kvkk">KVKK</Link>
+        </div>
         <div className="footer-bottom">
           <span>{footer.copyright}</span>
           <span>Made with ❤️ for curious kids</span>
