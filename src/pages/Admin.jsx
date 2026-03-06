@@ -17,6 +17,11 @@ async function apiAuth(password) {
   return data.token
 }
 
+function handleUnauthorized() {
+  sessionStorage.removeItem('kidi-admin-token')
+  window.location.reload()
+}
+
 async function apiSave(filePath, content) {
   const res = await fetch('/api/save', {
     method: 'POST',
@@ -26,6 +31,7 @@ async function apiSave(filePath, content) {
     },
     body: JSON.stringify({ filePath, content }),
   })
+  if (res.status === 401) return handleUnauthorized()
   const data = await res.json()
   if (!res.ok) throw new Error(data.error || 'Save failed')
   return data
@@ -59,6 +65,7 @@ function ImageField({ label, value, onChange, previewSize = 80 }) {
         headers: { Authorization: `Bearer ${getToken()}` },
         body: form,
       })
+      if (res.status === 401) return handleUnauthorized()
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Upload failed')
       onChange(data.url)
@@ -1192,6 +1199,7 @@ function BackupRestoreEditor() {
       const res = await fetch('/api/backups', {
         headers: { Authorization: `Bearer ${getToken()}` },
       })
+      if (res.status === 401) return handleUnauthorized()
       const data = await res.json()
       if (res.ok) setBackups(data.backups || [])
     } catch { /* ignore */ }
