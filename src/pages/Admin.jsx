@@ -1169,6 +1169,11 @@ export default function Admin() {
         fetch('/content/en.json').then(r => r.json()),
         fetch('/content/tr.json').then(r => r.json()),
       ])
+      const defaultParentApp = {
+        title: '', subtitle: '', features: []
+      }
+      if (!en.parentApp) en.parentApp = defaultParentApp
+      if (!tr.parentApp) tr.parentApp = { ...defaultParentApp }
       setSettingsData(s)
       setContentEn(en)
       setContentTr(tr)

@@ -59,8 +59,11 @@ export function ParentApp() {
   const ref = useScrollReveal()
   const [activeIdx, setActiveIdx] = useState(0)
   if (!content) return null
-  const pa = content.parentApp
-  if (!pa) return null
+  const pa = content.parentApp || {
+    title: 'Stay Connected with Your Child\'s Journey',
+    subtitle: 'Track your child\'s learning progress, achievements, and insights — all in the palm of your hand.',
+    features: []
+  }
   const screenshots = (settings?.parentApp?.screenshots || []).filter(s => s.url)
   const storeLinks = settings?.parentApp || {}
 
