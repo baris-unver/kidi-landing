@@ -118,8 +118,8 @@ export function SiteProvider({ children }) {
     const load = async () => {
       try {
         const [contentRes, settingsRes] = await Promise.all([
-          fetch(`/content/${lang}.json?t=${Date.now()}`),
-          fetch(`/content/settings.json?t=${Date.now()}`)
+          fetch(`/content/${lang}.json`),
+          fetch(`/content/settings.json`)
         ])
         const [contentData, settingsData] = await Promise.all([
           contentRes.json(),

@@ -24,6 +24,64 @@ function requireAuth(req, res, next) {
   next()
 }
 
+// --- Base64 migration: extract data:image values to /uploads/ files ---
+
+const BASE64_RE = /^data:image\/([\w+.-]+);base64,(.+)$/
+
+const MIME_TO_EXT = {
+  'png': '.png', 'jpeg': '.jpg', 'jpg': '.jpg', 'gif': '.gif',
+  'webp': '.webp', 'svg+xml': '.svg', 'x-icon': '.ico',
+  'vnd.microsoft.icon': '.ico',
+}
+
+async function extractBase64Value(value) {
+  const match = value.match(BASE64_RE)
+  if (!match) return value
+  const [, mimeSubtype, b64data] = match
+  const ext = MIME_TO_EXT[mimeSubtype] || '.bin'
+  const safeName = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}${ext}`
+  await fs.mkdir(UPLOAD_DIR, { recursive: true })
+  await fs.writeFile(path.join(UPLOAD_DIR, safeName), Buffer.from(b64data, 'base64'))
+  return `/uploads/${safeName}`
+}
+
+async function migrateBase64InObject(obj) {
+  if (!obj || typeof obj !== 'object') return false
+  let changed = false
+  for (const key of Object.keys(obj)) {
+    const val = obj[key]
+    if (typeof val === 'string' && BASE64_RE.test(val)) {
+      obj[key] = await extractBase64Value(val)
+      changed = true
+    } else if (typeof val === 'object' && val !== null) {
+      if (await migrateBase64InObject(val)) changed = true
+    }
+  }
+  return changed
+}
+
+async function migrateSettingsFile() {
+  const filesToCheck = ['settings.json', 'en.json', 'tr.json']
+  for (const fileName of filesToCheck) {
+    for (const dir of [DATA_DIR, path.join(DIST_DIR, 'content')]) {
+      const filePath = path.join(dir, fileName)
+      try {
+        const raw = await fs.readFile(filePath, 'utf-8')
+        const data = JSON.parse(raw)
+        if (await migrateBase64InObject(data)) {
+          const json = JSON.stringify(data, null, 2)
+          await fs.writeFile(filePath, json, 'utf-8')
+          console.log(`Migrated base64 images in ${filePath}`)
+        }
+      } catch {
+        // file doesn't exist yet or isn't valid JSON -- skip
+      }
+    }
+  }
+}
+
+// --- Auth ---
+
 app.post('/api/auth', (req, res) => {
   const { password } = req.body
   if (password !== ADMIN_PASSWORD) {
@@ -40,6 +98,8 @@ app.post('/api/auth/logout', requireAuth, (req, res) => {
   res.json({ ok: true })
 })
 
+// --- Save ---
+
 const ALLOWED_FILES = ['settings.json', 'en.json', 'tr.json']
 
 app.post('/api/save', requireAuth, async (req, res) => {
@@ -51,6 +111,7 @@ app.post('/api/save', requireAuth, async (req, res) => {
   }
 
   try {
+    await migrateBase64InObject(content)
     await fs.mkdir(DATA_DIR, { recursive: true })
 
     const json = JSON.stringify(content, null, 2)
@@ -66,8 +127,10 @@ app.post('/api/save', requireAuth, async (req, res) => {
   }
 })
 
+// --- Upload ---
+
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/x-icon', 'image/vnd.microsoft.icon']
-const MAX_UPLOAD = 10 * 1024 * 1024 // 10 MB per file
+const MAX_UPLOAD = 10 * 1024 * 1024
 
 app.post('/api/upload', requireAuth, async (req, res) => {
   try {
@@ -120,8 +183,8 @@ app.post('/api/upload', requireAuth, async (req, res) => {
 
     const ext = path.extname(filePart.filename).toLowerCase() || '.bin'
     const safeName = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}${ext}`
-    const filePath = path.join(UPLOAD_DIR, safeName)
-    await fs.writeFile(filePath, filePart.data)
+    const uploadPath = path.join(UPLOAD_DIR, safeName)
+    await fs.writeFile(uploadPath, filePart.data)
 
     res.json({ url: `/uploads/${safeName}` })
   } catch (e) {
@@ -143,7 +206,7 @@ function parseMultipart(buffer, boundary) {
     if (headerEnd === -1) { start = nextSep + sep.length; continue }
 
     const headerStr = part.subarray(0, headerEnd).toString()
-    const data = part.subarray(headerEnd + 4, part.length - 2) // trim trailing \r\n
+    const data = part.subarray(headerEnd + 4, part.length - 2)
 
     const nameMatch = headerStr.match(/name="([^"]+)"/)
     const filenameMatch = headerStr.match(/filename="([^"]+)"/)
@@ -162,15 +225,26 @@ function parseMultipart(buffer, boundary) {
   return parts
 }
 
-app.use('/uploads', express.static(UPLOAD_DIR))
-app.use('/content', express.static(DATA_DIR))
-app.use(express.static(DIST_DIR))
+// --- Static files with caching ---
+
+app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '30d', immutable: true }))
+
+app.use('/content', express.static(DATA_DIR, { maxAge: '60000' }))
+
+app.use(express.static(DIST_DIR, {
+  maxAge: '1y',
+  immutable: true,
+  setHeaders(res, filePath) {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache')
+    }
+  },
+}))
 
 app.get('/{*splat}', (req, res) => {
   res.sendFile(path.join(DIST_DIR, 'index.html'))
 })
 
-// JSON error handler -- catches body parser errors, etc.
 // Express requires exactly 4 params to detect this as an error handler
 // eslint-disable-next-line no-unused-vars
 app.use((err, _req, res, _next) => {
@@ -180,5 +254,6 @@ app.use((err, _req, res, _next) => {
 app.listen(PORT, async () => {
   await fs.mkdir(DATA_DIR, { recursive: true }).catch(() => {})
   await fs.mkdir(UPLOAD_DIR, { recursive: true }).catch(() => {})
+  await migrateSettingsFile()
   console.log(`Server running on port ${PORT}`)
 })
