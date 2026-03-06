@@ -158,7 +158,10 @@ const SECTION_LABELS = {
 }
 
 function SectionOrderEditor({ sections, onChange }) {
-  const items = sections?.length ? sections : DEFAULT_SECTIONS
+  const saved = sections?.length ? sections : DEFAULT_SECTIONS
+  const savedIds = new Set(saved.map(s => s.id))
+  const missing = DEFAULT_SECTIONS.filter(s => !savedIds.has(s.id))
+  const items = missing.length ? [...saved, ...missing] : saved
 
   const move = (idx, dir) => {
     const next = [...items]

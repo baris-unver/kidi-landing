@@ -36,7 +36,10 @@ export default function Landing() {
     </div>
   )
 
-  const sections = settings?.sections?.length ? settings.sections : DEFAULT_SECTIONS
+  const saved = settings?.sections?.length ? settings.sections : DEFAULT_SECTIONS
+  const savedIds = new Set(saved.map(s => s.id))
+  const missing = DEFAULT_SECTIONS.filter(s => !savedIds.has(s.id))
+  const sections = missing.length ? [...saved, ...missing] : saved
 
   return (
     <>
