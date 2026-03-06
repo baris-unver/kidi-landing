@@ -437,7 +437,8 @@ function NavEditor({ content, onChange }) {
 }
 
 function HeroEditor({ content, onChange }) {
-  const { set } = useContentHelpers(content, onChange)
+  const { set, setArr, addItem, removeItem } = useContentHelpers(content, onChange)
+  const cards = content.hero?.floaterCards || []
   return (
     <div className="admin-card">
       <Field label="Badge text" value={content.hero?.badge} onChange={v => set('hero.badge', v)} />
@@ -451,6 +452,35 @@ function HeroEditor({ content, onChange }) {
         <Field label="Secondary CTA button" value={content.hero?.ctaSecondary} onChange={v => set('hero.ctaSecondary', v)} />
       </div>
       <Field label="Trust line (below buttons)" value={content.hero?.trustLine} onChange={v => set('hero.trustLine', v)} />
+
+      <div style={{ marginTop: 24, paddingTop: 16, borderTop: '2px solid var(--border)' }}>
+        <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 12 }}>Floating Stat Cards</div>
+        {cards.map((card, i) => (
+          <div key={i}>
+            <div style={{ padding: '12px 0 8px', borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-muted)' }}>Card {i + 1}</span>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, cursor: 'pointer', color: card.visible !== false ? 'var(--primary)' : 'var(--text-muted)' }}>
+                  <input
+                    type="checkbox"
+                    checked={card.visible !== false}
+                    onChange={e => setArr('hero.floaterCards', i, 'visible', e.target.checked)}
+                    style={{ accentColor: 'var(--primary)' }}
+                  />
+                  {card.visible !== false ? 'Visible' : 'Hidden'}
+                </label>
+              </div>
+              <button className="btn btn-ghost admin-remove-btn" onClick={() => removeItem('hero.floaterCards', i)} title="Remove">✕</button>
+            </div>
+            <div className="admin-field-row">
+              <Field label="Emoji" value={card.emoji} onChange={v => setArr('hero.floaterCards', i, 'emoji', v)} />
+              <Field label="Value" value={card.value} onChange={v => setArr('hero.floaterCards', i, 'value', v)} />
+              <Field label="Label" value={card.label} onChange={v => setArr('hero.floaterCards', i, 'label', v)} />
+            </div>
+          </div>
+        ))}
+        <AddItemButton label="Add card" onClick={() => addItem('hero.floaterCards', { emoji: '✨', value: '', label: '', visible: true })} />
+      </div>
     </div>
   )
 }
@@ -1282,6 +1312,15 @@ export default function Admin() {
       }
       if (!en.parentApp) en.parentApp = defaultParentApp
       if (!tr.parentApp) tr.parentApp = { ...defaultParentApp }
+      const defaultFloaterCards = [
+        { emoji: '🏆', value: '4.9 / 5', label: 'App Store', visible: true },
+        { emoji: '📈', value: '+47%', label: 'avg. score boost', visible: true },
+        { emoji: '⚡', value: '12k+', label: 'active learners', visible: true },
+      ]
+      if (!en.hero) en.hero = {}
+      if (!en.hero.floaterCards) en.hero.floaterCards = defaultFloaterCards
+      if (!tr.hero) tr.hero = {}
+      if (!tr.hero.floaterCards) tr.hero.floaterCards = defaultFloaterCards.map(c => ({ ...c }))
       const defaultLegalPage = { title: '', badge: '', effectiveDate: '', lastUpdated: '', body: '' }
       if (!legEn.terms) legEn.terms = { ...defaultLegalPage }
       if (!legEn.privacy) legEn.privacy = { ...defaultLegalPage }

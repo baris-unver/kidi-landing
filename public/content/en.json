@@ -34,7 +34,12 @@
     "subtitle": "kidi.ai adapts to your child's unique pace and curiosity — creating a school that never feels like school.",
     "cta": "Start free trial",
     "ctaSecondary": "Watch demo",
-    "trustLine": "Join 12,000+ families already learning"
+    "trustLine": "Join 12,000+ families already learning",
+    "floaterCards": [
+      { "emoji": "🏆", "value": "4.9 / 5", "label": "App Store", "visible": true },
+      { "emoji": "📈", "value": "+47%", "label": "avg. score boost", "visible": true },
+      { "emoji": "⚡", "value": "12k+", "label": "active learners", "visible": true }
+    ]
   },
   "features": {
     "title": "Built for the way kids actually learn",

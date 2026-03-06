@@ -34,7 +34,12 @@
     "subtitle": "kidi.ai, çocuğunuzun kendine özgü hızına ve merakına uyum sağlar — okul gibi hissettirmeyen bir okul yaratır.",
     "cta": "Ücretsiz dene",
     "ctaSecondary": "Demo izle",
-    "trustLine": "12.000'den fazla aile zaten öğreniyor"
+    "trustLine": "12.000'den fazla aile zaten öğreniyor",
+    "floaterCards": [
+      { "emoji": "🏆", "value": "4.9 / 5", "label": "App Store", "visible": true },
+      { "emoji": "📈", "value": "+47%", "label": "avg. puan artışı", "visible": true },
+      { "emoji": "⚡", "value": "12k+", "label": "aktif öğrenci", "visible": true }
+    ]
   },
   "features": {
     "title": "Çocukların gerçekten öğrenme şekline göre tasarlandı",
