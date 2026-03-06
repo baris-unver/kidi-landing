@@ -569,6 +569,14 @@ async function mergeDefaults() {
         if (!(key in dataData)) {
           dataData[key] = distData[key]
           changed = true
+        } else if (distData[key] && typeof distData[key] === 'object' && !Array.isArray(distData[key])
+                   && dataData[key] && typeof dataData[key] === 'object' && !Array.isArray(dataData[key])) {
+          for (const subKey of Object.keys(distData[key])) {
+            if (!(subKey in dataData[key])) {
+              dataData[key][subKey] = distData[key][subKey]
+              changed = true
+            }
+          }
         }
       }
       if (changed) {
